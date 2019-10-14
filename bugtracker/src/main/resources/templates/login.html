@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html 
+    xmlns="http://www.w3.org/1999/xhtml" 
+    xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+    <head>
+        <meta charset="utf-8"/>
+        <title>BugTracker - Bejelentkező felület</title>
+        <link rel="stylesheet" type="text/css" src="css/styles.css" />
+
+        <!--
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/classic/theme-neptune/resources/theme-neptune-all.css">
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/ext-all-debug.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/classic/theme-neptune/theme-neptune.js"></script>
+
+        <script type="text/javascript">
+            Ext.onReady(function () {
+                
+                var loginpanel = Ext.create('Ext.form.Panel', {
+                    region: 'center',
+                    title: 'Bejelentkező panel',
+                    standardSubmit:true, 
+                    url: '/login',
+                    items: [
+                        {
+                            xtype: 'textfield',
+                            fieldLabel: 'Felhasználó név',
+                            name: 'username'
+                        }
+                        ,{
+                            xtype: 'textfield',
+                            inputType: 'password',
+                            fieldLabel: 'Jelszó',
+                            name: 'password'
+                        }
+                    ]
+                    , buttons: [
+                        { 
+                            text: "Login", 
+                            handler: function() { 
+                                var form = this.up('form').getForm();
+                                form.submit({
+                                    success: function(form, action) {
+                                            Ext.Msg.alert('Success', action.result.msg);
+                                        },
+                                        failure: function(form, action) {
+                                            Ext.Msg.alert('Failed', action.result.msg);
+                                        }
+                                }) 
+                            } 
+                        }
+                        , { 
+                            text: "Reset", 
+                            handler: function() { this.up('form').getForm().reset(); } 
+                        }
+                    ]
+                });
+
+                Ext.create('Ext.panel.Panel', {
+                    renderTo: "maindiv",
+                    width: 600,
+                    height: 400,
+                    border: true,
+                    layout: 'border', 
+                    items: [loginpanel]
+                }).center();
+            });
+        </script>
+        -->
+    </head>
+    <body>
+        <div th:if = "${param.error}">
+            Invalid username and password.
+        </div>
+        <div th:if = "${param.logout}">
+            You have been logged out.
+        </div>
+        
+        <form th:action = "@{/login}" method = "post">
+            <div>
+                <label> User Name : <input type = "text" name = "username"/> </label>
+            </div>
+            <div>
+                <label> Password: <input type = "password" name = "password"/> </label>
+            </div>
+            <div>
+                <input type = "submit" value = "Sign In"/>
+            </div>
+        </form>
+    </body>
+</html>
+
