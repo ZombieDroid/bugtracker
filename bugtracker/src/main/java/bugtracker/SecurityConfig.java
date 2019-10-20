@@ -18,32 +18,9 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	/*@Autowired
-	UserDetailsService userDetailsService;
-	
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailsService)
-			.passwordEncoder(getPasswordEncoder());
-	}
-*/
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
-		System.out.println("ASDSADSDASDASDSADSADSADASDASDSADSADASDASD");
 		httpSecurity.authorizeRequests().antMatchers("/").permitAll();
 	}
-	/*
-	private PasswordEncoder getPasswordEncoder() {
-		return new PasswordEncoder() {
-			@Override
-			public String encode(CharSequence charSequence) {
-				return charSequence.toString();
-			}
-			
-			@Override
-			public boolean matches(CharSequence charSequence, String s) {
-				return true;
-			}
-		};
-	}*/
+
 }
