@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="utf-8"/>
+    <title>Tickets</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/classic/theme-neptune/resources/theme-neptune-all.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/ext-all-debug.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/classic/theme-neptune/theme-neptune.js"></script>
+    <script type="text/javascript">
+        var ticketStr = "[[${tickets}]]";
+        Ext.onReady(function(){
+            try{
+                var tickets = JSON.parse(ticketStr.replace(/&quot;/g,'"'));
+
+                var ticketStore = Ext.create('Ext.data.Store', {
+                    fields : ['id'],
+                    proxy : {
+                        type : 'memory',
+                        reader : {
+                            type : 'json',
+                            rootProperty : 'items'
+                        }
+                    }
+                });
+
+                Ext.define('App.view.TicketPanel', {
+                    extend: 'Ext.grid.Panel',
+                    height: 600,
+                    width: 300,
+                    title: 'Tickets',
+                    store: ticketStore,
+
+                    columns: [  {
+                        text: 'Id',
+                        width: 100,
+                        sortable: false,
+                        hideable: false,
+                        dataIndex: 'id'
+                    }],
+                    viewConfig : {
+                        listeners : {
+                            itemdblclick : function(view, cell, cellIndex, record, row, rowIndex, e) {
+                                window.location.assign("/api/ticket/"+cell.data.id);
+                            }
+                        }
+                    }
+                });
+
+                var ticketPanel = Ext.create('App.view.TicketPanel', {
+                    renderTo: Ext.getBody()
+                });
+
+                for(var i=0; i<tickets.length; i++){
+                    ticketStore.add({id: tickets[i].id });
+                }
+            } catch(e){
+                alert(e);
+            }
+        });
+    </script>
+</head>
+<body>
+    <div id="maindiv" style="height: 500px"/>
+</body>
+</html>
