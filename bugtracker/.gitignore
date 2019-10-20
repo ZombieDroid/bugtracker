@@ -42,3 +42,4 @@ $RECYCLE.BIN/
 *.msp
 *.lnk
 .idea
+*.DS_Store
