@@ -44,10 +44,10 @@ public class TicketController {
 
     @GetMapping("/all")
     public ModelAndView getAllTicket() {
-        ModelAndView mv = new ModelAndView("ticket");
+        ModelAndView mv = new ModelAndView("tickets");
         try{
             String ticketJson = (new ObjectMapper()).writeValueAsString(ticketService.getAllTicket());
-            mv.addObject(ticketJson);
+            mv.addObject("tickets", ticketJson);
         } catch (JsonProcessingException e) {
             mv.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
