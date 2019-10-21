@@ -45,7 +45,7 @@ public class ProjectController {
 
     @GetMapping("/all")
     public ModelAndView getAllProjects() {
-        ModelAndView mv = new ModelAndView("project");
+        ModelAndView mv = new ModelAndView("projects");
         try{
             String projectJson = (new ObjectMapper()).writeValueAsString(projectService.getAllProject());
             mv.addObject(projectJson);
