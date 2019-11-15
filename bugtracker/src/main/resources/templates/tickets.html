@@ -14,7 +14,8 @@
                 var tickets = JSON.parse(ticketStr.replace(/&quot;/g,'"'));
 
                 var ticketStore = Ext.create('Ext.data.Store', {
-                    fields : ['id'],
+                    fields : ['id', 'name', 'priority', 'description',
+                        'reporter', 'status', 'project', 'spentTime', 'type'],
                     proxy : {
                         type : 'memory',
                         reader : {
@@ -24,10 +25,32 @@
                     }
                 });
 
+                var searchField = Ext.create('Ext.form.TextField', {
+                    fieldLabel: 'Search'
+                });
+
+                var searchButton = Ext.create('Ext.button.Button', {
+                    text: 'Search',
+                    handler: function(){
+                        Ext.Ajax.request({
+                            url: "/api/ticket/searchTickets/" + searchField.text,
+                            method: "GET",
+                            success: function (form, action){
+                                console.log(form.responseText);
+                            },
+                            failure: function(form, action){
+                                alert(form.responseText);
+                            }
+                        });
+                    }
+                });
+
+                //Ext.create()
+
                 Ext.define('App.view.TicketPanel', {
                     extend: 'Ext.grid.Panel',
                     height: 600,
-                    width: 300,
+                    width: 1000,
                     title: 'Tickets',
                     store: ticketStore,
 
@@ -37,7 +60,55 @@
                         sortable: false,
                         hideable: false,
                         dataIndex: 'id'
-                    }],
+                    },{
+                        text: 'Name',
+                        width: 100,
+                        sortable: false,
+                        hideable: false,
+                        dataIndex: 'name'
+                    },{
+                        text: 'Priority',
+                        width: 100,
+                        sortable: false,
+                        hideable: false,
+                        dataIndex: 'priority'
+                    },{
+                        text: 'Description',
+                        width: 100,
+                        sortable: false,
+                        hideable: false,
+                        dataIndex: 'description'
+                    },{
+                        text: 'Reporter',
+                        width: 100,
+                        sortable: false,
+                        hideable: false,
+                        dataIndex: 'reporter'
+                    },{
+                        text: 'Status',
+                        width: 100,
+                        sortable: false,
+                        hideable: false,
+                        dataIndex: 'status'
+                    },{
+                        text: 'Project',
+                        width: 100,
+                        sortable: false,
+                        hideable: false,
+                        dataIndex: 'project'
+                    },{
+                        text: 'Spent Time',
+                        width: 100,
+                        sortable: false,
+                        hideable: false,
+                        dataIndex: 'spentTime'
+                    },{
+                        text: 'Type',
+                        width: 100,
+                        sortable: false,
+                        hideable: false,
+                        dataIndex: 'type'
+                    },],
                     viewConfig : {
                         listeners : {
                             itemdblclick : function(view, cell, cellIndex, record, row, rowIndex, e) {
@@ -52,7 +123,67 @@
                 });
 
                 for(var i=0; i<tickets.length; i++){
-                    ticketStore.add({id: tickets[i].id });
+                    var reporter = "";
+                    var project = "";
+                    var status = "";
+                    var responseType = "";
+
+                    if(tickets[i].reporterId != null){
+                        Ext.Ajax.request({
+                            url: "/api/ticket/getReporter/" + tickets[i].reporterId,
+                            method: "GET",
+                            success: function (form, action){
+                                reporter = form.responseText;
+                            },
+                            failure: function(form, action){
+                                alert(form.responseText);
+                            }
+                        });
+                    }
+
+                    if(tickets[i].projectId != null){
+                        Ext.Ajax.request({
+                            url: "/api/ticket/getProject/" + tickets[i].projectId,
+                            method: "GET",
+                            success: function (form, action){
+                                project = form.responseText;
+                            },
+                            failure: function(form, action){
+                                alert(form.responseText);
+                            }
+                        });
+                    }
+
+                    if(tickets[i].statusId != null){
+                        Ext.Ajax.request({
+                            url: "/api/ticket/getStatus/" + tickets[i].statusId,
+                            method: "GET",
+                            success: function (form, action){
+                                status = form.responseText;
+                            },
+                            failure: function(form, action){
+                                alert(form.responseText);
+                            }
+                        });
+                    }
+
+                    if(tickets[i].type != null){
+                        Ext.Ajax.request({
+                            url: "/api/ticket/getType/" + tickets[i].type,
+                            method: "GET",
+                            success: function (form, action){
+                                console.log(form.responseText);
+                                responseType = form.responseText;
+                            },
+                            failure: function(form, action){
+                                alert(form.responseText);
+                            }
+                        });
+                    }
+
+                    ticketStore.add({id: tickets[i].id, name: tickets[i].name, priority: tickets[i].priority,
+                        description: tickets[i].description, reporter: reporter, status: status,
+                        project: project, spentTime: tickets[i].spentTime, type: responseType });
                 }
             } catch(e){
                 alert(e);

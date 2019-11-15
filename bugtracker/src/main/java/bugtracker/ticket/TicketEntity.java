@@ -94,4 +94,10 @@ public class TicketEntity {
     public void setName(String name) {
         this.name = name;
     }
+
+    public enum Priority {
+        S1,
+        S2,
+        S3
+    }
 }

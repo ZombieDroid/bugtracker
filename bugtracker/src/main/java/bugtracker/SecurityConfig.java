@@ -1,5 +1,6 @@
 package bugtracker;
 
+import bugtracker.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity.authorizeRequests().antMatchers("/").permitAll().and().csrf().disable();
+	}
+
+	@Bean
+	@Override
+	public UserDetailsService userDetailsService(){
+		return new UserService();
 	}
 
 }

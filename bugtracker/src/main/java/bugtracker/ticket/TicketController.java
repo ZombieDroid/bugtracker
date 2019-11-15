@@ -1,5 +1,9 @@
 package bugtracker.ticket;
 
+import bugtracker.project.ProjectEntity;
+import bugtracker.project.ProjectService;
+import bugtracker.user.UserEntity;
+import bugtracker.user.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
@@ -17,6 +21,12 @@ public class TicketController {
 
     @Inject
     TicketService ticketService;
+
+    @Inject
+    UserService userService;
+
+    @Inject
+    ProjectService projectService;
 
     @RequestMapping(value = "/create", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -52,5 +62,55 @@ public class TicketController {
             mv.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return mv;
+    }
+
+    @GetMapping("/getReporter/{id}")
+    public ResponseEntity<String> getReporterById(@PathVariable Long id){
+        String name = "";
+        UserEntity user = userService.getUserById(id);
+        if(user != null){
+            name = user.getName();
+        }
+        return new ResponseEntity<>(name, HttpStatus.OK);
+    }
+
+    @GetMapping("/getProject/{id}")
+    public ResponseEntity<String> getProjectById(@PathVariable Long id){
+        String name = "";
+        ProjectEntity project = projectService.getProjectById(id);
+        if(project != null){
+            name = project.getName();
+        }
+        return new ResponseEntity<>(name, HttpStatus.OK);
+    }
+
+    @GetMapping("/getStatus/{id}")
+    public ResponseEntity<String> getStatusById(@PathVariable long id) throws Exception {
+        String status = "";
+        switch((short)id){
+            case 0: status = "Open";
+                break;
+            case 1: status = "In Progress";
+                break;
+            case 2: status = "Done";
+                break;
+            default:
+                throw new Exception("Unknown status: " + id);
+        }
+        return new ResponseEntity<>(status, HttpStatus.OK);
+    }
+
+    @GetMapping("/getType/{id}")
+    public ResponseEntity<String> getTypeById(@PathVariable long id) throws Exception {
+        String type = "";
+        switch((short)id){
+            case 0: type = "Feature";
+                break;
+            case 1: type = "Bug";
+                break;
+            default:
+                throw new Exception("Unknown type: " + id);
+        }
+        return new ResponseEntity<>(type, HttpStatus.OK);
     }
 }
