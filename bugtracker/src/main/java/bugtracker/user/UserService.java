@@ -1,11 +1,16 @@
 package bugtracker.user;
 
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import javax.inject.Inject;
 import java.util.List;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     @Inject
     UserRepository userRepository;
@@ -22,4 +27,10 @@ public class UserService {
         return userRepository.findUserEntityById(id);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
+        UserEntity user = userRepository.findUserEntityByName(userName);
+        return new BTUserDetails(user);
+    }
 }
