@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "BT_USER")
@@ -16,6 +17,7 @@ public class UserEntity {
     private String email;
     private String password;
     private Long type;
+    private LocalDateTime deletedTs;
 
 
     public long getId() {
@@ -57,4 +59,13 @@ public class UserEntity {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public void setDeletedTs(LocalDateTime deletedTs) {
+        this.deletedTs = deletedTs;
+    }
+
+    public LocalDateTime getDeletedTs() {
+        return deletedTs;
+    }
+
 }
