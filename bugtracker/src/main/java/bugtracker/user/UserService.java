@@ -2,6 +2,7 @@ package bugtracker.user;
 
 import org.springframework.stereotype.Service;
 import javax.inject.Inject;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -11,6 +12,15 @@ public class UserService {
     UserRepository userRepository;
 
     public UserEntity createUser(UserEntity user){
+        return userRepository.save(user);
+    }
+
+    public UserEntity deleteUser(UserEntity user){
+        user.setDeletedTs(LocalDateTime.now());
+        return userRepository.save(user);
+    }
+
+    public UserEntity modifyUser(UserEntity user){
         return userRepository.save(user);
     }
 
