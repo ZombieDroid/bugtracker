@@ -16,7 +16,7 @@ public class UserEntity {
     private String name;
     private String email;
     private String password;
-    private Long type;
+    private int type;
     private LocalDateTime deletedTs;
 
 
@@ -44,11 +44,11 @@ public class UserEntity {
         this.email = email;
     }
 
-    public Long getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(Long type) {
+    public void setType(int type) {
         this.type = type;
     }
 
