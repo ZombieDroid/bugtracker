@@ -1,4 +1,4 @@
-package bugtracker.ticket;
+package bugtracker.history;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,21 +9,19 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
-import java.util.List;
 
-@RestController
-@RequestMapping("/api/ticket")
-public class TicketController {
+public class HistoryController {
+
 
     @Inject
-    TicketService ticketService;
+    HistoryService historyService;
 
     @RequestMapping(value = "/create", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody()
-    public ResponseEntity addNewTicet(@RequestBody TicketEntity ticket) {
+    public ResponseEntity addNewHistory(@RequestBody HistoryEntity history) {
         try {
-            ticketService.createTicket(ticket);
+            historyService.createHistory(history);
         } catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -31,11 +29,11 @@ public class TicketController {
     }
 
     @GetMapping("/{id}")
-    public ModelAndView getTicket(@PathVariable Long id) {
-        ModelAndView mv = new ModelAndView("ticket");
+    public ModelAndView getHistory(@PathVariable Long id) {
+        ModelAndView mv = new ModelAndView("history");
         try{
-            String ticketJson = (new ObjectMapper()).writeValueAsString(ticketService.getTicketById(id));
-            mv.addObject(ticketJson);
+            String historyJson = (new ObjectMapper()).writeValueAsString(historyService.getHistoryById(id));
+            mv.addObject(historyJson);
         } catch (JsonProcessingException e) {
             mv.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -43,14 +41,15 @@ public class TicketController {
     }
 
     @GetMapping("/all")
-    public ModelAndView getAllTicket() {
-        ModelAndView mv = new ModelAndView("tickets");
+    public ModelAndView getAllHistoryByObjectId(Long objectId) {
+        ModelAndView mv = new ModelAndView("historys");
         try{
-            String ticketJson = (new ObjectMapper()).writeValueAsString(ticketService.getAllTicket());
-            mv.addObject("tickets", ticketJson);
+            String HistoryJson = (new ObjectMapper()).writeValueAsString(historyService.getAllByObjectId(objectId));
+            mv.addObject(HistoryJson);
         } catch (JsonProcessingException e) {
             mv.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return mv;
     }
+
 }

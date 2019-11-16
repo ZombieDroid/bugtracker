@@ -1,4 +1,4 @@
-package bugtracker.ticket;
+package bugtracker.project;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,21 +9,22 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
-import java.util.List;
 
 @RestController
-@RequestMapping("/api/ticket")
-public class TicketController {
+@RequestMapping("/api/project")
+public class ProjectController {
+
+    // todo: move related logic to ProjectService!
 
     @Inject
-    TicketService ticketService;
+    ProjectService projectService;
 
     @RequestMapping(value = "/create", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody()
-    public ResponseEntity addNewTicet(@RequestBody TicketEntity ticket) {
+    public ResponseEntity addNewProject(@RequestBody ProjectEntity project) {
         try {
-            ticketService.createTicket(ticket);
+            projectService.createProject(project);
         } catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -31,11 +32,11 @@ public class TicketController {
     }
 
     @GetMapping("/{id}")
-    public ModelAndView getTicket(@PathVariable Long id) {
-        ModelAndView mv = new ModelAndView("ticket");
+    public ModelAndView getProject(@PathVariable Long id) {
+        ModelAndView mv = new ModelAndView("project");
         try{
-            String ticketJson = (new ObjectMapper()).writeValueAsString(ticketService.getTicketById(id));
-            mv.addObject(ticketJson);
+            String projectJson = (new ObjectMapper()).writeValueAsString(projectService.getProjectById(id));
+            mv.addObject(projectJson);
         } catch (JsonProcessingException e) {
             mv.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -43,11 +44,11 @@ public class TicketController {
     }
 
     @GetMapping("/all")
-    public ModelAndView getAllTicket() {
-        ModelAndView mv = new ModelAndView("tickets");
+    public ModelAndView getAllProjects() {
+        ModelAndView mv = new ModelAndView("projects");
         try{
-            String ticketJson = (new ObjectMapper()).writeValueAsString(ticketService.getAllTicket());
-            mv.addObject("tickets", ticketJson);
+            String projectJson = (new ObjectMapper()).writeValueAsString(projectService.getAllProject());
+            mv.addObject(projectJson);
         } catch (JsonProcessingException e) {
             mv.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }

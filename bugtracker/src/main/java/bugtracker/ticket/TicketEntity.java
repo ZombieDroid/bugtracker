@@ -14,6 +14,7 @@ public class TicketEntity {
     @Id
     @GeneratedValue
     private long id;
+    private String name;
     private Long priority;
     private String description;
     private Long reporterId;
@@ -84,5 +85,13 @@ public class TicketEntity {
 
     public void setSpentTime(LocalDateTime spentTime) {
         this.spentTime = spentTime;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
