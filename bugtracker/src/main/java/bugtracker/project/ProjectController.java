@@ -1,5 +1,6 @@
 package bugtracker.project;
 
+import bugtracker.ticket.TicketEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/project")
@@ -53,5 +55,10 @@ public class ProjectController {
             mv.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return mv;
+    }
+
+    @GetMapping("/getAll")
+    public ResponseEntity<List<ProjectEntity>> getAll(){
+        return new ResponseEntity<>(projectService.getAllProject(), HttpStatus.OK);
     }
 }

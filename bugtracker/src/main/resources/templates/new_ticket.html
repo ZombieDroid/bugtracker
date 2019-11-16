@@ -9,6 +9,11 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/classic/theme-neptune/theme-neptune.js"></script>
     <script type="text/javascript">
         Ext.onReady(function () {
+
+            var projectStore = Ext.create('Ext.data.Store', {
+                fields: ['id', 'name']
+            });
+
             var priorityStore = Ext.create('Ext.data.Store', {
                 fields: ['priority'],
                 data : [
@@ -26,36 +31,28 @@
                 ]
             });
 
+            var projects = Ext.create('Ext.form.ComboBox', {
+                fieldLabel: 'Project',
+                store: projectStore,
+                queryMode: 'local',
+                displayField: 'name',
+                valueField: 'id'
+            });
+
             var tickePrio = Ext.create('Ext.form.ComboBox', {
                 fieldLabel: 'Priority',
                 valueField: 'value',
                 store: priorityStore,
-                tpl: Ext.create('Ext.XTemplate',
-                    '<ul class="x-list-plain"><tpl for=".">',
-                    '<li role="option" class="x-boundlist-item">{name}</li>',
-                    '</tpl></ul>'
-                ),
-                displayTpl: Ext.create('Ext.XTemplate',
-                    '<tpl for=".">',
-                    '{name}',
-                    '</tpl>'
-                )
+                displayField: 'name',
+                queryMode: 'local'
             });
 
-            var tickeType = Ext.create('Ext.form.ComboBox', {
+            var ticketType = Ext.create('Ext.form.ComboBox', {
                 fieldLabel: 'Type',
                 valueField: 'value',
                 store: typeStore,
-                tpl: Ext.create('Ext.XTemplate',
-                    '<ul class="x-list-plain"><tpl for=".">',
-                    '<li role="option" class="x-boundlist-item">{name}</li>',
-                    '</tpl></ul>'
-                ),
-                displayTpl: Ext.create('Ext.XTemplate',
-                    '<tpl for=".">',
-                    '{name}',
-                    '</tpl>'
-                )
+                displayField: 'name',
+                queryMode: 'local'
             });
 
             var name = Ext.create('Ext.form.TextField', {
@@ -71,7 +68,7 @@
             });
 
             tickePrio.setValue(0);
-            tickeType.setValue(0);
+            ticketType.setValue(0);
 
             var createButton = Ext.create('Ext.Button', {
                text: "Create",
@@ -98,8 +95,8 @@
                     name: name.value,
                     description: desc.value,
                     priority: tickePrio.getValue(),
-                    projectId: 0,   // TODO: create combo box for projects
-                    type: tickeType.getValue()
+                    projectId: projects.getValue(),
+                    type: ticketType.getValue()
                 }
             };
 
@@ -114,13 +111,30 @@
                 items: [
                     name,
                     desc,
+                    projects,
                     tickePrio,
-                    tickeType
+                    ticketType
                 ],
                 buttons: [
                     createButton
                 ]
             }).center();
+
+            Ext.Ajax.request({
+                url: '/api/project/getAll',
+                method: 'GET',
+                success: function (form, action) {
+                    allProjects = JSON.parse(form.responseText);
+                    for(var i=0; i<allProjects.length; i++){
+                        projectStore.add({id: allProjects[i].id, name: allProjects[i].name});
+                    }
+
+                    projects.setValue(allProjects[0].id);
+                },
+                failure: function (form, action) {
+                    alert(form.responseText);
+                }
+            })
         });
     </script>
 </head>

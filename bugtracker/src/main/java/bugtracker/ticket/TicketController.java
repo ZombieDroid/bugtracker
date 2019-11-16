@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
+import java.util.LinkedList;
 import java.util.List;
 
 @RestController
@@ -31,7 +32,10 @@ public class TicketController {
     @RequestMapping(value = "/create", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody()
-    public ResponseEntity addNewTicet(@RequestBody TicketEntity ticket) {
+    public ResponseEntity addNewTicket(@RequestBody TicketEntity ticket) {
+        if(ticket.getName().isEmpty()){
+            return new ResponseEntity<>("Ticket must have a name", HttpStatus.BAD_REQUEST);
+        }
         try {
             ticketService.createTicket(ticket);
         } catch (Exception e){
@@ -54,14 +58,7 @@ public class TicketController {
 
     @GetMapping("/all")
     public ModelAndView getAllTicket() {
-        ModelAndView mv = new ModelAndView("tickets");
-        try{
-            String ticketJson = (new ObjectMapper()).writeValueAsString(ticketService.getAllTicket());
-            mv.addObject("tickets", ticketJson);
-        } catch (JsonProcessingException e) {
-            mv.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        return mv;
+        return new ModelAndView("tickets");
     }
 
     @GetMapping("/getReporter/{id}")
@@ -112,5 +109,24 @@ public class TicketController {
                 throw new Exception("Unknown type: " + id);
         }
         return new ResponseEntity<>(type, HttpStatus.OK);
+    }
+
+    @GetMapping("/searchTickets/")
+    public ResponseEntity<List<TicketEntity>> getAllTickets(){
+        return searchTickets("");
+    }
+
+    @GetMapping("/searchTickets/{searchText}")
+    public ResponseEntity<List<TicketEntity>> searchTickets(@PathVariable String searchText){
+        List<TicketEntity> tickets = new LinkedList<>();
+        List<TicketEntity> allTickets = ticketService.getAllTicket();
+        for(TicketEntity ticket : allTickets){
+            if((ticket.getName() != null && ticket.getName().contains(searchText)) ||
+                    (ticket.getDescription() != null && ticket.getDescription().contains(searchText))){
+                tickets.add(ticket);
+            }
+        }
+
+        return new ResponseEntity<>(tickets, HttpStatus.OK);
     }
 }

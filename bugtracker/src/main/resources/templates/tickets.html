@@ -8,10 +8,9 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/ext-all-debug.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/classic/theme-neptune/theme-neptune.js"></script>
     <script type="text/javascript">
-        var ticketStr = "[[${tickets}]]";
         Ext.onReady(function(){
             try{
-                var tickets = JSON.parse(ticketStr.replace(/&quot;/g,'"'));
+                var tickets = {};
 
                 var ticketStore = Ext.create('Ext.data.Store', {
                     fields : ['id', 'name', 'priority', 'description',
@@ -32,20 +31,10 @@
                 var searchButton = Ext.create('Ext.button.Button', {
                     text: 'Search',
                     handler: function(){
-                        Ext.Ajax.request({
-                            url: "/api/ticket/searchTickets/" + searchField.text,
-                            method: "GET",
-                            success: function (form, action){
-                                console.log(form.responseText);
-                            },
-                            failure: function(form, action){
-                                alert(form.responseText);
-                            }
-                        });
+                        ticketStore.removeAll();
+                        updateTicketTable(searchField.value);
                     }
                 });
-
-                //Ext.create()
 
                 Ext.define('App.view.TicketPanel', {
                     extend: 'Ext.grid.Panel',
@@ -108,7 +97,7 @@
                         sortable: false,
                         hideable: false,
                         dataIndex: 'type'
-                    },],
+                    }],
                     viewConfig : {
                         listeners : {
                             itemdblclick : function(view, cell, cellIndex, record, row, rowIndex, e) {
@@ -122,69 +111,105 @@
                     renderTo: Ext.getBody()
                 });
 
-                for(var i=0; i<tickets.length; i++){
-                    var reporter = "";
-                    var project = "";
-                    var status = "";
-                    var responseType = "";
+                Ext.create('Ext.panel.Panel', {
+                    renderTo: Ext.getBody(),
+                    width: 1000,
+                    height:1200,
+                    layout: {
+                        type: 'vbox',
+                        padding: 5
+                    },
+                    items: [
+                        searchField,
+                        searchButton,
+                        ticketPanel
+                    ]
+                });
 
-                    if(tickets[i].reporterId != null){
-                        Ext.Ajax.request({
-                            url: "/api/ticket/getReporter/" + tickets[i].reporterId,
-                            method: "GET",
-                            success: function (form, action){
-                                reporter = form.responseText;
-                            },
-                            failure: function(form, action){
-                                alert(form.responseText);
-                            }
-                        });
+                var updateTicketTable = function(searchText){
+                    Ext.Ajax.request({
+                        url: "/api/ticket/searchTickets/" + searchText,
+                        method: "GET",
+                        success: function (form, action){
+                            tickets = JSON.parse(form.responseText);
+                            fillTicketStore();
+                        },
+                        failure: function(form, action){
+                            alert(form.responseText);
+                        }
+                    });
+                };
+
+                var fillTicketStore = function (){
+                    for(var i=0; i<tickets.length; i++){
+                        var reporter = "";
+                        var project = "";
+                        var status = "";
+                        var responseType = "";
+
+                        if(tickets[i].reporterId != null){
+                            Ext.Ajax.request({
+                                url: "/api/ticket/getReporter/" + tickets[i].reporterId,
+                                method: "GET",
+                                async: false,
+                                success: function (form, action){
+                                    reporter = form.responseText;
+                                },
+                                failure: function(form, action){
+                                    alert(form.responseText);
+                                }
+                            });
+                        }
+
+                        if(tickets[i].projectId != null){
+                            Ext.Ajax.request({
+                                url: "/api/ticket/getProject/" + tickets[i].projectId,
+                                method: "GET",
+                                async: false,
+                                success: function (form, action){
+                                    project = form.responseText;
+                                },
+                                failure: function(form, action){
+                                    alert(form.responseText);
+                                }
+                            });
+                        }
+
+                        if(tickets[i].statusId != null){
+                            Ext.Ajax.request({
+                                url: "/api/ticket/getStatus/" + tickets[i].statusId,
+                                method: "GET",
+                                async: false,
+                                success: function (form, action){
+                                    status = form.responseText;
+                                },
+                                failure: function(form, action){
+                                    alert(form.responseText);
+                                }
+                            });
+                        }
+
+                        if(tickets[i].type != null){
+                            Ext.Ajax.request({
+                                url: "/api/ticket/getType/" + tickets[i].type,
+                                method: "GET",
+                                async: false,
+                                success: function (form, action){
+                                    responseType = form.responseText;
+                                },
+                                failure: function(form, action){
+                                    alert(form.responseText);
+                                }
+                            });
+                        }
+
+                        ticketStore.add({id: tickets[i].id, name: tickets[i].name, priority: tickets[i].priority,
+                            description: tickets[i].description, reporter: reporter, status: status,
+                            project: project, spentTime: tickets[i].spentTime, type: responseType });
                     }
+                };
 
-                    if(tickets[i].projectId != null){
-                        Ext.Ajax.request({
-                            url: "/api/ticket/getProject/" + tickets[i].projectId,
-                            method: "GET",
-                            success: function (form, action){
-                                project = form.responseText;
-                            },
-                            failure: function(form, action){
-                                alert(form.responseText);
-                            }
-                        });
-                    }
-
-                    if(tickets[i].statusId != null){
-                        Ext.Ajax.request({
-                            url: "/api/ticket/getStatus/" + tickets[i].statusId,
-                            method: "GET",
-                            success: function (form, action){
-                                status = form.responseText;
-                            },
-                            failure: function(form, action){
-                                alert(form.responseText);
-                            }
-                        });
-                    }
-
-                    if(tickets[i].type != null){
-                        Ext.Ajax.request({
-                            url: "/api/ticket/getType/" + tickets[i].type,
-                            method: "GET",
-                            success: function (form, action){
-                                console.log(form.responseText);
-                                responseType = form.responseText;
-                            },
-                            failure: function(form, action){
-                                alert(form.responseText);
-                            }
-                        });
-                    }
-
-                    ticketStore.add({id: tickets[i].id, name: tickets[i].name, priority: tickets[i].priority,
-                        description: tickets[i].description, reporter: reporter, status: status,
-                        project: project, spentTime: tickets[i].spentTime, type: responseType });
-                }
+                updateTicketTable("");
             } catch(e){
                 alert(e);
             }
