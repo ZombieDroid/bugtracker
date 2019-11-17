@@ -39,7 +39,7 @@
                 valueField: 'id'
             });
 
-            var tickePrio = Ext.create('Ext.form.ComboBox', {
+            var ticketPrio = Ext.create('Ext.form.ComboBox', {
                 fieldLabel: 'Priority',
                 valueField: 'value',
                 store: priorityStore,
@@ -67,7 +67,7 @@
                bodyPadding: 10
             });
 
-            tickePrio.setValue(0);
+            ticketPrio.setValue(0);
             ticketType.setValue(0);
 
             var createButton = Ext.create('Ext.Button', {
@@ -112,7 +112,7 @@
                     name,
                     desc,
                     projects,
-                    tickePrio,
+                    ticketPrio,
                     ticketType
                 ],
                 buttons: [
@@ -134,7 +134,7 @@
                 failure: function (form, action) {
                     alert(form.responseText);
                 }
-            })
+            });
         });
     </script>
 </head>

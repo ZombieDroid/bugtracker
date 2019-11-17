@@ -22,4 +22,9 @@ public class TicketService {
         return ticketRepository.findTicketEntityById(id);
     }
 
+    public void saveTicket(TicketEntity ticket) { ticketRepository.save(ticket); }
+
+    public List<TicketEntity> searchByName(String text) { return ticketRepository.findByNameContaining(text); }
+    public List<TicketEntity> searchByDescription(String text) { return ticketRepository.findByDescriptionContaining(text); }
+
 }

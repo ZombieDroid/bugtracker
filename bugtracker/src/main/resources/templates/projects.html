@@ -3,18 +3,17 @@
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
 <head>
     <meta charset="utf-8"/>
-    <title>Tickets</title>
+    <title>Projects</title>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/classic/theme-neptune/resources/theme-neptune-all.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/ext-all-debug.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/classic/theme-neptune/theme-neptune.js"></script>
     <script type="text/javascript">
         Ext.onReady(function(){
             try{
-                var tickets = {};
+                var projects = {};
 
-                var ticketStore = Ext.create('Ext.data.Store', {
-                    fields : ['id', 'name', 'priority', 'description',
-                        'reporter', 'status', 'project', 'spentTime', 'type'],
+                var projectStore = Ext.create('Ext.data.Store', {
+                    fields : ['id', 'name', 'description', 'approver', 'assignee', 's1', 's2', 's3'],
                     proxy : {
                         type : 'memory',
                         reader : {
@@ -31,17 +30,17 @@
                 var searchButton = Ext.create('Ext.button.Button', {
                     text: 'Search',
                     handler: function(){
-                        ticketStore.removeAll();
-                        updateTicketTable(searchField.value);
+                        projectStore.removeAll();
+                        updateProjectTable(searchField.value);
                     }
                 });
 
-                Ext.define('App.view.TicketPanel', {
+                Ext.define('App.view.ProjectPanel', {
                     extend: 'Ext.grid.Panel',
                     height: 600,
                     width: 1000,
-                    title: 'Tickets',
-                    store: ticketStore,
+                    title: 'Projects',
+                    store: projectStore,
 
                     columns: [  {
                         text: 'Id',
@@ -56,23 +55,17 @@
                         hideable: false,
                         dataIndex: 'name'
                     },{
-                        text: 'Priority',
-                        width: 100,
-                        sortable: false,
-                        hideable: false,
-                        dataIndex: 'priority'
-                    },{
                         text: 'Description',
                         width: 100,
                         sortable: false,
                         hideable: false,
                         dataIndex: 'description'
                     },{
-                        text: 'Reporter',
+                        text: 'Approver',
                         width: 100,
                         sortable: false,
                         hideable: false,
-                        dataIndex: 'reporter'
+                        dataIndex: 'approver'
                     },{
                         text: 'Status',
                         width: 100,
@@ -80,35 +73,35 @@
                         hideable: false,
                         dataIndex: 'status'
                     },{
-                        text: 'Project',
+                        text: 'S1',
                         width: 100,
                         sortable: false,
                         hideable: false,
-                        dataIndex: 'project'
+                        dataIndex: 's1'
                     },{
-                        text: 'Spent Time',
+                        text: 'S2',
                         width: 100,
                         sortable: false,
                         hideable: false,
-                        dataIndex: 'spentTime'
+                        dataIndex: 's2'
                     },{
-                        text: 'Type',
+                        text: 'S3',
                         width: 100,
                         sortable: false,
                         hideable: false,
-                        dataIndex: 'type'
+                        dataIndex: 's3'
                     }],
                     viewConfig : {
                         listeners : {
                             itemdblclick : function(view, cell, cellIndex, record, row, rowIndex, e) {
-                                localStorage.setItem("ticketId", cell.data.id);
-                                window.location.assign("/ticket");
+                                localStorage.setItem("projectId", cell.data.id);
+                                window.location.assign("/project");
                             }
                         }
                     }
                 });
 
-                var ticketPanel = Ext.create('App.view.TicketPanel', {
+                var projectPanel = Ext.create('App.view.ProjectPanel', {
                     renderTo: Ext.getBody()
                 });
 
@@ -123,17 +116,17 @@
                     items: [
                         searchField,
                         searchButton,
-                        ticketPanel
+                        projectPanel
                     ]
                 });
 
-                var updateTicketTable = function(searchText){
+                var updateProjectTable = function(searchText){
                     Ext.Ajax.request({
-                        url: "/api/ticket/searchTickets/" + searchText,
+                        url: "/api/project/searchProjects/" + searchText,
                         method: "GET",
                         success: function (form, action){
-                            tickets = JSON.parse(form.responseText);
-                            fillTicketStore();
+                            projects = JSON.parse(form.responseText);
+                            fillProjectStore();
                         },
                         failure: function(form, action){
                             alert(form.responseText);
@@ -141,20 +134,18 @@
                     });
                 };
 
-                var fillTicketStore = function (){
-                    for(var i=0; i<tickets.length; i++){
-                        var reporter = "";
-                        var project = "";
-                        var status = "";
-                        var responseType = "";
+                var fillProjectStore = function (){
+                    for(var i=0; i<projects.length; i++){
+                        var approver = "";
+                        var assignee = "";
 
-                        if(tickets[i].reporterId != null){
+                        if(projects[i].defaultApproverId != null){
                             Ext.Ajax.request({
-                                url: "/api/ticket/getReporter/" + tickets[i].reporterId,
+                                url: "/api/user/" + projects[i].defaultApproverId,
                                 method: "GET",
                                 async: false,
                                 success: function (form, action){
-                                    reporter = form.responseText;
+                                    approver = JSON.parse(form.responseText).name;
                                 },
                                 failure: function(form, action){
                                     alert(form.responseText);
@@ -162,13 +153,13 @@
                             });
                         }
 
-                        if(tickets[i].projectId != null){
+                        if(projects[i].defaultDeveloperId != null){
                             Ext.Ajax.request({
-                                url: "/api/ticket/getProject/" + tickets[i].projectId,
+                                url: "/api/user/" + projects[i].defaultDeveloperId,
                                 method: "GET",
                                 async: false,
                                 success: function (form, action){
-                                    project = form.responseText;
+                                    assignee = JSON.parse(form.responseText).name;
                                 },
                                 failure: function(form, action){
                                     alert(form.responseText);
@@ -176,41 +167,12 @@
                             });
                         }
 
-                        if(tickets[i].statusId != null){
-                            Ext.Ajax.request({
-                                url: "/api/ticket/getStatus/" + tickets[i].statusId,
-                                method: "GET",
-                                async: false,
-                                success: function (form, action){
-                                    status = form.responseText;
-                                },
-                                failure: function(form, action){
-                                    alert(form.responseText);
-                                }
-                            });
-                        }
-
-                        if(tickets[i].type != null){
-                            Ext.Ajax.request({
-                                url: "/api/ticket/getType/" + tickets[i].type,
-                                method: "GET",
-                                async: false,
-                                success: function (form, action){
-                                    responseType = form.responseText;
-                                },
-                                failure: function(form, action){
-                                    alert(form.responseText);
-                                }
-                            });
-                        }
-
-                        ticketStore.add({id: tickets[i].id, name: tickets[i].name, priority: tickets[i].priority,
-                            description: tickets[i].description, reporter: reporter, status: status,
-                            project: project, spentTime: tickets[i].spentTime, type: responseType });
+                        projectStore.add({id: projects[i].id, name: projects[i].name, description: projects[i].description,
+                            approver: approver, assignee: assignee, s1: projects[i].s1, s2: projects[i].s2, s3: projects[i].s3 });
                     }
                 };
 
-                updateTicketTable("");
+                updateProjectTable("");
             } catch(e){
                 alert(e);
             }
@@ -218,6 +180,6 @@
     </script>
 </head>
 <body>
-    <div id="maindiv" style="height: 500px"/>
+<div id="maindiv" style="height: 500px"/>
 </body>
 </html>

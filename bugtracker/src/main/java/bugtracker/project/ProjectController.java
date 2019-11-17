@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/project")
@@ -60,5 +63,23 @@ public class ProjectController {
     @GetMapping("/getAll")
     public ResponseEntity<List<ProjectEntity>> getAll(){
         return new ResponseEntity<>(projectService.getAllProject(), HttpStatus.OK);
+    }
+
+    @GetMapping("/searchProjects/")
+    public ResponseEntity<List<ProjectEntity>> searchAllProjects(){
+        return getAll();
+    }
+
+    @GetMapping("/searchProjects/{searchText}")
+    public ResponseEntity<List<ProjectEntity>> searchProjects(@PathVariable String searchText){
+        List<ProjectEntity> projects = projectService.searchByName(searchText);
+        List<ProjectEntity> tmpProjs = projectService.searchByDescription(searchText);
+
+        for(ProjectEntity proj : tmpProjs){
+            if(!projects.contains(proj)){
+                projects.add(proj);
+            }
+        }
+        return new ResponseEntity<>(projects, HttpStatus.OK);
     }
 }

@@ -19,4 +19,6 @@ public class ProjectService {
     public ProjectEntity getProjectById(Long id){
         return projectRepository.findProjectEntityById(id);
     }
+    public List<ProjectEntity> searchByName(String text) { return projectRepository.findByNameContaining(text); }
+    public List<ProjectEntity> searchByDescription(String text) { return projectRepository.findByDescriptionContaining(text); }
 }

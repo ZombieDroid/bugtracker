@@ -21,18 +21,10 @@
 
             var userType = Ext.create('Ext.form.ComboBox', {
                 fieldLabel: 'Type',
-                valueField: 'value',
                 store: typeStore,
-                tpl: Ext.create('Ext.XTemplate',
-                    '<ul class="x-list-plain"><tpl for=".">',
-                    '<li role="option" class="x-boundlist-item">{name}</li>',
-                    '</tpl></ul>'
-                ),
-                displayTpl: Ext.create('Ext.XTemplate',
-                    '<tpl for=".">',
-                    '{name}',
-                    '</tpl>'
-                )
+                queryMode: 'local',
+                displayField: 'name',
+                valueField: 'value'
             });
 
             var name = Ext.create('Ext.form.TextField', {
@@ -41,10 +33,18 @@
                 bodyPadding: 10
             });
 
-            var email = Ext.create('Ext.form.TextField', {
-               fieldLabel: 'Email',
+            var psw = Ext.create('Ext.form.TextField', {
+                fieldLabel: 'Password',
+                inputType: 'password',
                 width: 400,
                 bodyPadding: 10
+            });
+
+            var email = Ext.create('Ext.form.field.Text', {
+                fieldLabel: 'Email',
+                width: 400,
+                bodyPadding: 10,
+                vtype: 'email'
             });
 
             userType.setValue(0);
@@ -72,6 +72,7 @@
             var getUser = function(){
                 return {
                     name: name.value,
+                    password: psw.value,
                     email: email.value,
                     type: userType.getValue()
                 }
@@ -87,6 +88,7 @@
                 },
                 items: [
                     name,
+                    psw,
                     email,
                     userType
                 ],

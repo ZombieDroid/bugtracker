@@ -43,4 +43,8 @@ public class UserService implements UserDetailsService {
         UserEntity user = userRepository.findUserEntityByName(userName);
         return new BTUserDetails(user);
     }
+
+    public List<UserEntity> getUsersByType(Long type){
+        return userRepository.findByType(type);
+    }
 }

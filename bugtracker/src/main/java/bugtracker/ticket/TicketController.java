@@ -45,15 +45,22 @@ public class TicketController {
     }
 
     @GetMapping("/{id}")
-    public ModelAndView getTicket(@PathVariable Long id) {
-        ModelAndView mv = new ModelAndView("ticket");
+    public ResponseEntity<TicketEntity> getTicket(@PathVariable Long id) {
         try{
-            String ticketJson = (new ObjectMapper()).writeValueAsString(ticketService.getTicketById(id));
-            mv.addObject(ticketJson);
-        } catch (JsonProcessingException e) {
-            mv.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(ticketService.getTicketById(id), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return mv;
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<String> updateTicket(@RequestBody TicketEntity ticket) {
+        try{
+            ticketService.saveTicket(ticket);
+        } catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @GetMapping("/all")
@@ -118,15 +125,14 @@ public class TicketController {
 
     @GetMapping("/searchTickets/{searchText}")
     public ResponseEntity<List<TicketEntity>> searchTickets(@PathVariable String searchText){
-        List<TicketEntity> tickets = new LinkedList<>();
-        List<TicketEntity> allTickets = ticketService.getAllTicket();
-        for(TicketEntity ticket : allTickets){
-            if((ticket.getName() != null && ticket.getName().contains(searchText)) ||
-                    (ticket.getDescription() != null && ticket.getDescription().contains(searchText))){
+        List<TicketEntity> tickets = ticketService.searchByName(searchText);
+        List<TicketEntity> tmpTickets = ticketService.searchByDescription(searchText);
+
+        for(TicketEntity ticket : tmpTickets){
+            if(!tickets.contains(ticket)){
                 tickets.add(ticket);
             }
         }
-
         return new ResponseEntity<>(tickets, HttpStatus.OK);
     }
 }
