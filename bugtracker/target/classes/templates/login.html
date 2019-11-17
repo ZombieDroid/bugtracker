@@ -25,13 +25,15 @@
                         {
                             xtype: 'textfield',
                             fieldLabel: 'Felhasználó név',
-                            name: 'username'
+                            name: 'username',
+                            required: true
                         }
                         ,{
                             xtype: 'textfield',
                             inputType: 'password',
                             fieldLabel: 'Jelszó',
-                            name: 'password'
+                            name: 'password',
+                            required: true
                         }
                     ]
                     , buttons: [
@@ -57,7 +59,8 @@
                 });
 
                 Ext.create('Ext.panel.Panel', {
-                    renderTo: "maindiv",
+                    //renderTo: "maindiv",
+                    renderTo: 'loginform',
                     width: 600,
                     height: 400,
                     border: true,
@@ -76,8 +79,12 @@
             You have been logged out.
         </div>
         
-        <form th:action = "@{/login}" method = "post">
-            <div>
+        <!-- <div id = "loginform" /> -->
+        
+        
+        <form th:action = "@{/login}" method = "post" id = "loginform" >
+
+<!--             <div>
                 <label> User Name : <input type = "text" name = "username"/> </label>
             </div>
             <div>
@@ -86,6 +93,7 @@
             <div>
                 <input type = "submit" value = "Sign In"/>
             </div>
+-->
         </form>
     </body>
 </html>

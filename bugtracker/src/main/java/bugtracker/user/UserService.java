@@ -1,6 +1,7 @@
 package bugtracker.user;
 
 import org.springframework.stereotype.Service;
+
 import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,5 +32,9 @@ public class UserService {
     public UserEntity getUserById(Long id){
         return userRepository.findUserEntityById(id);
     }
+    
+    public UserEntity findUserByUsername(String name) {
+		return userRepository.findUserEntityByName(name);
+	}
 
 }
