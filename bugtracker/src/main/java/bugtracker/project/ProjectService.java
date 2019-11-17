@@ -21,4 +21,5 @@ public class ProjectService {
     }
     public List<ProjectEntity> searchByName(String text) { return projectRepository.findByNameContaining(text); }
     public List<ProjectEntity> searchByDescription(String text) { return projectRepository.findByDescriptionContaining(text); }
+    public ProjectEntity saveProject(ProjectEntity project) { return projectRepository.save(project);  }
 }

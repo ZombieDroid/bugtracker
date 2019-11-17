@@ -36,16 +36,24 @@ public class ProjectController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PostMapping("/update")
+    public ResponseEntity<String> updateTicket(@RequestBody ProjectEntity project) {
+        try{
+            projectService.saveProject(project);
+        } catch (Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @GetMapping("/{id}")
-    public ModelAndView getProject(@PathVariable Long id) {
+    public ResponseEntity<ProjectEntity> getProject(@PathVariable Long id) {
         ModelAndView mv = new ModelAndView("project");
         try{
-            String projectJson = (new ObjectMapper()).writeValueAsString(projectService.getProjectById(id));
-            mv.addObject(projectJson);
-        } catch (JsonProcessingException e) {
-            mv.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(projectService.getProjectById(id), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return mv;
     }
 
     @GetMapping("/all")
