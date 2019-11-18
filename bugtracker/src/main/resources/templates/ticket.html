@@ -39,6 +39,10 @@
                     fields: ['id', 'name']
                 });
 
+                var reporterStore = Ext.create('Ext.data.Store', {
+                    fields: ['id', 'name']
+                });
+
                 var priorityStore = Ext.create('Ext.data.Store', {
                     fields: ['priority'],
                     data : [
@@ -59,6 +63,14 @@
                 var projects = Ext.create('Ext.form.ComboBox', {
                     fieldLabel: 'Project',
                     store: projectStore,
+                    queryMode: 'local',
+                    displayField: 'name',
+                    valueField: 'id'
+                });
+
+                var reporters = Ext.create('Ext.form.ComboBox', {
+                    fieldLabel: 'Reporter',
+                    store: reporterStore,
                     queryMode: 'local',
                     displayField: 'name',
                     valueField: 'id'
@@ -98,6 +110,21 @@
                     }
                 });
 
+                Ext.Ajax.request({
+                    url: '/api/user/getAllUser',
+                    method: 'GET',
+                    success: function (form, action) {
+                        allUser = JSON.parse(form.responseText);
+                        for(var i=0; i<allUser.length; i++){
+                            reporterStore.add({id: allUser[i].id, name: allUser[i].name});
+                        }
+                        reporters.setValue(ticket.reporterId);
+                    },
+                    failure: function (form, action) {
+                        alert(form.responseText);
+                    }
+                });
+
                 var updateButton = Ext.create('Ext.button.Button', {
                     text: 'Update',
                     handler: function(){
@@ -106,7 +133,7 @@
                             method: 'POST',
                             jsonData: getTicket(),
                             success: function (form, action) {
-                                // ToDo: redirect...
+                                window.location.assign("/ticket/all");
                             },
                             failure: function (form, action) {
                                 alert(form.responseText);
@@ -122,7 +149,8 @@
                         description: desc.getValue(),
                         projectId: projects.getValue(),
                         priority: ticketPrio.getValue(),
-                        type: ticketType.getValue()
+                        type: ticketType.getValue(),
+                        reporterId: reporters.getValue()
                     }
                 };
 
@@ -138,6 +166,7 @@
                         name,
                         desc,
                         projects,
+                        reporters,
                         ticketPrio,
                         ticketType
                     ],

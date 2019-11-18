@@ -67,11 +67,11 @@
                         hideable: false,
                         dataIndex: 'approver'
                     },{
-                        text: 'Status',
+                        text: 'Developer',
                         width: 100,
                         sortable: false,
                         hideable: false,
-                        dataIndex: 'status'
+                        dataIndex: 'assignee'
                     },{
                         text: 'S1',
                         width: 100,
@@ -168,8 +168,16 @@
                         }
 
                         projectStore.add({id: projects[i].id, name: projects[i].name, description: projects[i].description,
-                            approver: approver, assignee: assignee, s1: projects[i].s1, s2: projects[i].s2, s3: projects[i].s3 });
+                            approver: approver, assignee: assignee, s1: getTime(projects[i].s1Time),
+                            s2: getTime(projects[i].s2Time), s3: getTime(projects[i].s3Time) });
                     }
+                };
+
+                var getTime = function(timeArr){
+                  if(timeArr == null || timeArr.length < 3){
+                      return "-";
+                  }
+                  return timeArr[0] + "-" + timeArr[1] + "-" + timeArr[2];
                 };
 
                 updateProjectTable("");

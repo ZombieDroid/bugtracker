@@ -81,7 +81,7 @@
                         method: "POST",
                         jsonData: getTicket(),
                         success: function (form, action) {
-                            // ....
+                            window.location.assign("/ticket/all");
                         },
                         failure: function (form, action) {
                             alert(form.responseText);
@@ -94,7 +94,7 @@
                 return {
                     name: name.value,
                     description: desc.value,
-                    priority: tickePrio.getValue(),
+                    priority: ticketPrio.getValue(),
                     projectId: projects.getValue(),
                     type: ticketType.getValue()
                 }

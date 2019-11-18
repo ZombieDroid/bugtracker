@@ -61,7 +61,7 @@ public class UserController {
 
     @GetMapping("/getAllApprover")
     public ResponseEntity<List<UserEntity>> getAllApprover(){
-        return new ResponseEntity<>(userService.getUsersByType(3L), HttpStatus.OK);
+        return new ResponseEntity<>(userService.getUsersByType(3), HttpStatus.OK);
     }
 
     @PostMapping("/dispatch")
@@ -80,6 +80,11 @@ public class UserController {
 
     @GetMapping("/getAllDeveloper")
     public ResponseEntity<List<UserEntity>> getAllDeveloper(){
-        return new ResponseEntity<>(userService.getUsersByType(1L), HttpStatus.OK);
+        return new ResponseEntity<>(userService.getUsersByType(1), HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllUser")
+    public ResponseEntity<List<UserEntity>> getAllSimpleUser(){
+        return new ResponseEntity<>(userService.getUsersByType(2), HttpStatus.OK);
     }
 }
