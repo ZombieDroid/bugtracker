@@ -1,12 +1,18 @@
 package bugtracker.user;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user")
@@ -48,6 +54,7 @@ public class UserController {
     }
 
     @GetMapping("/all")
+    @Secured("ROLE_ADMIN")
     public List<UserEntity> getAllUser() {
         return userService.getAllUser();
     }
@@ -55,6 +62,20 @@ public class UserController {
     @GetMapping("/getAllApprover")
     public ResponseEntity<List<UserEntity>> getAllApprover(){
         return new ResponseEntity<>(userService.getUsersByType(3L), HttpStatus.OK);
+    }
+
+    @PostMapping("/dispatch")
+    public ResponseEntity<Void> dispatchUser() {
+        SecurityContext cc = SecurityContextHolder.getContext();
+        HttpHeaders headers = new HttpHeaders();
+        if (cc.getAuthentication() != null) {
+            Authentication auth = cc.getAuthentication();
+            try {
+                headers.setLocation(new URI("/project/all"));
+            } catch (URISyntaxException ignored) {}
+        }
+
+        return new ResponseEntity<>(headers, HttpStatus.FOUND);
     }
 
     @GetMapping("/getAllDeveloper")
