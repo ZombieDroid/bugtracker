@@ -43,3 +43,6 @@ $RECYCLE.BIN/
 *.lnk
 .idea
 *.DS_Store
+bugtracker.iml
+target
+../.idea
