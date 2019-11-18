@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,6 +15,7 @@ public class UserEntity {
     @GeneratedValue
     private long id;
     private String name;
+    @Email
     private String email;
     private String password;
     private int type;
