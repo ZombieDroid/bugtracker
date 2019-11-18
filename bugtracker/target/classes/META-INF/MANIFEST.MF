@@ -3,7 +3,7 @@ Implementation-Title: Bug Tracker
 Implementation-Version: 0.0.1-SNAPSHOT
 Built-By: ammolnar
 Implementation-Vendor-Id: hu.elte.pgy
-Build-Jdk: 1.8.0_221
+Build-Jdk: 1.8.0_231
 Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
  ot-starter-parent/bugtracker
 Created-By: Maven Integration for Eclipse
