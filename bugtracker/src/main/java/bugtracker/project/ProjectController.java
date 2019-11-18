@@ -1,6 +1,5 @@
 package bugtracker.project;
 
-import bugtracker.ticket.TicketEntity;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpStatus;
@@ -10,10 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
-import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/project")
