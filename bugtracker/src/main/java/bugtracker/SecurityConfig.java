@@ -9,36 +9,68 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.server.SecurityWebFilterChain;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @Configuration
 @EnableWebSecurity //Very important!
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+
+	@Autowired
+	UserService userService;
+
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
+
 		httpSecurity.authorizeRequests()
-				.antMatchers("/login*").permitAll()
-				.antMatchers("/api/*").hasAnyRole("ADMIN")
+				.antMatchers("/login*").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+				.antMatchers("/user/**").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+				.antMatchers("/project/**").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+				.antMatchers("/api/**").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+				.antMatchers("/ticket/**").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
 				.and()
-			.csrf().disable()
-			.formLogin()
+				.csrf().disable()
+				.formLogin()
 				.loginPage("/login")
-				.successForwardUrl("/api/ticket/all")
+				.successForwardUrl("/api/user/dispatch")
 				.permitAll()
 				.and()
-			.logout()
+				.logout()
 				.permitAll();
+		httpSecurity.userDetailsService(userService);
+	}
+
+	@Override
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userDetailsService())
+				.passwordEncoder(passwordEncoder());
 	}
 
 	@Bean
-	@Override
-	public UserDetailsService userDetailsService(){
-		return new UserService();
+	public BCryptPasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
+
+	@Bean
+	public AuthenticationSuccessHandler appAuthenticationSuccessHandler(){
+		return new AppAuthenticationSuccessHandler();
+	}
+
+}
+
+class AppAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+	protected void handle(HttpServletRequest request, HttpServletResponse response,
+						  Authentication authentication) throws IOException, ServletException {
 	}
 
 }
