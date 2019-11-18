@@ -55,5 +55,77 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 		<artifactId>spring-boot-starter-test</artifactId>
 		<scope>test</scope>
 	</dependency>
+
+	  <dependency>
+		  <groupId>com.oracle</groupId>
+		  <artifactId>ojdbc6</artifactId>
+		  <version>11.2.0.3</version>
+	  </dependency>
+      <dependency>
+          <groupId>org.hibernate</groupId>
+          <artifactId>hibernate-core</artifactId>
+          <version>5.3.12.Final</version>
+      </dependency>
+	  <dependency>
+		  <groupId>org.hibernate</groupId>
+		  <artifactId>hibernate-core</artifactId>
+		  <version>5.3.10.Final</version>
+	  </dependency>
+	  <dependency>
+		  <groupId>org.hibernate</groupId>
+		  <artifactId>hibernate-core</artifactId>
+		  <version>5.3.12.Final</version>
+	  </dependency>
+	  <!-- https://mvnrepository.com/artifact/org.projectlombok/lombok -->
+	  <dependency>
+		  <groupId>org.projectlombok</groupId>
+		  <artifactId>lombok</artifactId>
+		  <version>1.18.8</version>
+		  <scope>provided</scope>
+	  </dependency>
+	  <dependency>
+		  <groupId>javax.inject</groupId>
+		  <artifactId>javax.inject</artifactId>
+		  <version>1</version>
+	  </dependency>
+	  <!-- https://mvnrepository.com/artifact/javax.ejb/ejb-api -->
+	  <dependency>
+		  <groupId>javax.ejb</groupId>
+		  <artifactId>ejb-api</artifactId>
+		  <version>3.0</version>
+		  <scope>provided</scope>
+	  </dependency>
+
+	  <dependency>
+		  <groupId>org.hibernate</groupId>
+		  <artifactId>hibernate-core</artifactId>
+		  <version>5.3.12.Final</version>
+	  </dependency>
+
   </dependencies>
+
+	<repositories>
+		<repository>
+			<id>spring-releases</id>
+			<url>https://repo.spring.io/libs-release</url>
+		</repository>
+
+		<repository>
+			<id>codehaus</id>
+			<url>http://repository.codehaus.org/org/codehaus</url>
+		</repository>
+		
+		<!-- Repository for ORACLE JDBC Driver -->
+		<repository>
+            <id>codelds</id>
+            <url>https://code.lds.org/nexus/content/groups/main-repo</url>
+        </repository>
+         
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>spring-releases</id>
+			<url>https://repo.spring.io/libs-release</url>
+		</pluginRepository>
+	</pluginRepositories>
 </project>
