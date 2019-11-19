@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import javax.websocket.server.PathParam;
 import java.util.List;
 
 @RestController
@@ -39,7 +40,7 @@ public class StatusController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<StatusEntity> getStatus(@RequestBody Long id) {
+    public ResponseEntity<StatusEntity> getStatus(@PathVariable Long id) {
         try {
             return new ResponseEntity<>(statusService.getStatusById(id), HttpStatus.OK);
         } catch (Exception e) {

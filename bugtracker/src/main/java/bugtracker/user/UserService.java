@@ -64,7 +64,7 @@ public class UserService implements UserDetailsService {
         return new BCryptPasswordEncoder();
     }
 
-    public List<UserEntity> getUsersByType(Long type){
+    public List<UserEntity> getUsersByType(Integer type){
         return userRepository.findByType(type);
     }
 }

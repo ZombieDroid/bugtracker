@@ -67,11 +67,11 @@
                         hideable: false,
                         dataIndex: 'approver'
                     },{
-                        text: 'Status',
+                        text: 'Developer',
                         width: 100,
                         sortable: false,
                         hideable: false,
-                        dataIndex: 'status'
+                        dataIndex: 'assignee'
                     },{
                         text: 'S1',
                         width: 100,
@@ -105,10 +105,17 @@
                     renderTo: Ext.getBody()
                 });
 
+                var newButton = Ext.create('Ext.button.Button', {
+                    text: 'New',
+                    handler: function(){
+                        window.location.assign("/project/new");
+                    }
+                });
+
                 Ext.create('Ext.panel.Panel', {
                     renderTo: Ext.getBody(),
                     width: 1000,
-                    height:1200,
+                    height: 600,
                     layout: {
                         type: 'vbox',
                         padding: 5
@@ -117,6 +124,9 @@
                         searchField,
                         searchButton,
                         projectPanel
+                    ],
+                    buttons: [
+                        newButton
                     ]
                 });
 
@@ -168,8 +178,16 @@
                         }
 
                         projectStore.add({id: projects[i].id, name: projects[i].name, description: projects[i].description,
-                            approver: approver, assignee: assignee, s1: projects[i].s1, s2: projects[i].s2, s3: projects[i].s3 });
+                            approver: approver, assignee: assignee, s1: getTime(projects[i].s1Time),
+                            s2: getTime(projects[i].s2Time), s3: getTime(projects[i].s3Time) });
                     }
+                };
+
+                var getTime = function(timeArr){
+                  if(timeArr == null || timeArr.length < 3){
+                      return "-";
+                  }
+                  return timeArr[0] + "-" + timeArr[1] + "-" + timeArr[2];
                 };
 
                 updateProjectTable("");

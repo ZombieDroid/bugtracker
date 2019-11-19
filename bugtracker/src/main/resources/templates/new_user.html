@@ -60,7 +60,7 @@
                         method: "POST",
                         jsonData: getUser(),
                         success: function (form, action) {
-                            // ....
+                            window.location.assign("/project/all"); // TODO: redirect to all users
                         },
                         failure: function (form, action) {
                             alert(form.responseText);

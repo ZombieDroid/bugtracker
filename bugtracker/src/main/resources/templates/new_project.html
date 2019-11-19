@@ -75,7 +75,7 @@
                         method: "POST",
                         jsonData: getProject(),
                         success: function (form, action) {
-                            // ....
+                            window.location.assign("/project/all");
                         },
                         failure: function (form, action) {
                             alert(form.responseText);
