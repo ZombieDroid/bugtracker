@@ -23,6 +23,10 @@
                 ]
             });
 
+            var statusStore = Ext.create('Ext.data.Store', {
+                fields: ['id', 'name']
+            });
+
             var typeStore = Ext.create('Ext.data.Store', {
                 fields: ['type'],
                 data : [
@@ -34,6 +38,14 @@
             var projects = Ext.create('Ext.form.ComboBox', {
                 fieldLabel: 'Project',
                 store: projectStore,
+                queryMode: 'local',
+                displayField: 'name',
+                valueField: 'id'
+            });
+
+            var statuses = Ext.create('Ext.form.ComboBox', {
+                fieldLabel: 'Status',
+                store: statusStore,
                 queryMode: 'local',
                 displayField: 'name',
                 valueField: 'id'
@@ -96,9 +108,37 @@
                     description: desc.value,
                     priority: ticketPrio.getValue(),
                     projectId: projects.getValue(),
+                    statusId: statuses.getValue(),
                     type: ticketType.getValue()
                 }
             };
+
+            var reporterStore = Ext.create('Ext.data.Store', {
+                fields: ['id', 'name']
+            });
+
+            var reporters = Ext.create('Ext.form.ComboBox', {
+                fieldLabel: 'Reporter',
+                store: reporterStore,
+                queryMode: 'local',
+                displayField: 'name',
+                valueField: 'id'
+            });
+
+            Ext.Ajax.request({
+                url: '/api/user/getAllUser',
+                method: 'GET',
+                success: function (form, action) {
+                    allUser = JSON.parse(form.responseText);
+                    for(var i=0; i<allUser.length; i++){
+                        reporterStore.add({id: allUser[i].id, name: allUser[i].name});
+                    }
+                    reporters.setValue(allUser[0]);
+                },
+                failure: function (form, action) {
+                    alert(form.responseText);
+                }
+            });
 
             Ext.create('Ext.panel.Panel', {
                 renderTo: Ext.getBody(),
@@ -112,6 +152,7 @@
                     name,
                     desc,
                     projects,
+                    statuses,
                     ticketPrio,
                     ticketType
                 ],
@@ -130,6 +171,22 @@
                     }
 
                     projects.setValue(allProjects[0].id);
+                },
+                failure: function (form, action) {
+                    alert(form.responseText);
+                }
+            });
+
+            Ext.Ajax.request({
+                url: '/api/status/all',
+                method: 'GET',
+                success: function (form, action) {
+                    allStatuses = JSON.parse(form.responseText);
+                    for(var i=0; i<allStatuses.length; i++){
+                        statusStore.add({id: allStatuses[i].id, name: allStatuses[i].name});
+                    }
+
+                    statuses.setValue(allStatuses[0].id);
                 },
                 failure: function (form, action) {
                     alert(form.responseText);

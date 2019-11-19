@@ -154,6 +154,34 @@
                     }
                 };
 
+                var statusStore = Ext.create('Ext.data.Store', {
+                    fields: ['id', 'name']
+                });
+
+                var statuses = Ext.create('Ext.form.ComboBox', {
+                    fieldLabel: 'Status',
+                    store: statusStore,
+                    queryMode: 'local',
+                    displayField: 'name',
+                    valueField: 'id'
+                });
+
+                Ext.Ajax.request({
+                    url: '/api/status/all',
+                    method: 'GET',
+                    success: function (form, action) {
+                        allStatuses = JSON.parse(form.responseText);
+                        for(var i=0; i<allStatuses.length; i++){
+                            statusStore.add({id: allStatuses[i].id, name: allStatuses[i].name});
+                        }
+
+                        statuses.setValue(ticket.statusId);
+                    },
+                    failure: function (form, action) {
+                        alert(form.responseText);
+                    }
+                });
+
                 Ext.create('Ext.panel.Panel', {
                     renderTo: Ext.getBody(),
                     width: 1000,
@@ -167,6 +195,7 @@
                         desc,
                         projects,
                         reporters,
+                        statuses,
                         ticketPrio,
                         ticketType
                     ],

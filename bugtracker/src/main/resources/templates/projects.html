@@ -105,10 +105,17 @@
                     renderTo: Ext.getBody()
                 });
 
+                var newButton = Ext.create('Ext.button.Button', {
+                    text: 'New',
+                    handler: function(){
+                        window.location.assign("/project/new");
+                    }
+                });
+
                 Ext.create('Ext.panel.Panel', {
                     renderTo: Ext.getBody(),
                     width: 1000,
-                    height:1200,
+                    height: 600,
                     layout: {
                         type: 'vbox',
                         padding: 5
@@ -117,6 +124,9 @@
                         searchField,
                         searchButton,
                         projectPanel
+                    ],
+                    buttons: [
+                        newButton
                     ]
                 });
 
