@@ -37,7 +37,12 @@ public class UserService implements UserDetailsService {
     }
 
     public UserEntity modifyUser(UserEntity user){
-        return userRepository.save(user);
+        UserEntity userEntity = userRepository.findByName(user.getName());
+        userEntity.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        userEntity.setEmail(user.getEmail());
+        userEntity.setDeletedTs(user.getDeletedTs());
+        userEntity.setName(user.getName());
+        return userRepository.save(userEntity);
     }
 
     public List<UserEntity> getAllUser(){

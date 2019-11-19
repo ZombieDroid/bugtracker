@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="utf-8"/>
+    <title>New User</title>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/classic/theme-neptune/resources/theme-neptune-all.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/ext-all-debug.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/classic/theme-neptune/theme-neptune.js"></script>
+    <script type="text/javascript">
+        Ext.onReady(function () {
+        var user = {};
+
+        Ext.Ajax.request({
+            url: '/api/user/'+localStorage.getItem("userId"),
+            method: 'GET',
+            async: false,
+            success: function (form, action) {
+                user = JSON.parse(form.responseText);
+            },
+            failure: function (form, action) {
+                alert(form.responseText);
+            }
+        });
+
+        var getDate = function(date){
+            if(date == null || date < 3){
+                return '01 01 0000';
+            }
+            return date[0] + ' ' + date[1] + ' ' + date[2];
+        };
+
+        var typeStore = Ext.create('Ext.data.Store', {
+            fields: ['type'],
+            data : [
+                {"value":0, "name":"Admin"},
+                {"value":1, "name":"Developer"},
+                {"value":2, "name":"User"},
+                {"value":3, "name":"Approver"}  // TODO: jovahagyo?
+            ]
+        });
+
+        var type = Ext.create('Ext.form.ComboBox', {
+            fieldLabel: 'Type',
+            store: typeStore,
+            queryMode: 'local',
+            displayField: 'name',
+            valueField: 'value'
+        });
+
+
+        var name = Ext.create('Ext.form.TextField', {
+            fieldLabel: 'Name',
+            width: 400,
+            bodyPadding: 10,
+            value: user.name
+        });
+
+        var email = Ext.create('Ext.form.TextField', {
+            fieldLabel: 'Email',
+            width: 400,
+            bodyPadding: 10,
+            value: user.email
+        });
+
+        var password = Ext.create('Ext.form.TextField', {
+            fieldLabel: 'Password',
+            fieldType: 'password',
+            inputType: 'password',
+            width: 400,
+            bodyPadding: 10,
+            value: user.password
+        });
+
+
+        var deleteDate = Ext.create('Ext.form.Date', {
+            fieldLabel: 'Deleted date',
+            width: 400,
+            format: 'Y m d',
+            value: getDate(user.deletedTs)
+        });
+
+        var updateButton = Ext.create('Ext.Button', {
+            text: "Update",
+            style: {
+                border: 1
+            },
+            handler: function () {
+                Ext.Ajax.request({
+                    url: "/api/user/modify",
+                    method: "POST",
+                    jsonData: getUser(),
+                    success: function (form, action) {
+                        alert('success');
+                        window.location.assign("/user/all"); // TODO: redirect to all users
+                    },
+                    failure: function (form, action) {
+                        alert(form.responseText);
+                    }
+                })
+            }
+        });
+
+        var getUser = function(){
+            return {
+                name: name.value,
+                password: password.value,
+                email: email.value,
+                type: type.value
+            }
+        };
+
+        Ext.create('Ext.panel.Panel', {
+            renderTo: Ext.getBody(),
+            width: 1000,
+            height:500,
+            layout: {
+                type: 'vbox',
+                padding: 5
+            },
+            items: [
+                name,
+                password,
+                email,
+                type
+            ],
+            buttons: [
+                updateButton
+            ]
+        }).center();
+        });
+    </script>
+</head>
+<body>
+
+</body>
+</html>

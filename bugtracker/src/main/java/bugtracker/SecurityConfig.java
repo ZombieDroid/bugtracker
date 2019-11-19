@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -31,12 +32,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 
+
+
 		httpSecurity.authorizeRequests()
-				.antMatchers("/login*").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-				.antMatchers("/user/**").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-				.antMatchers("/project/**").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-				.antMatchers("/api/**").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
-				.antMatchers("/ticket/**").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+				.antMatchers("/login*").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_DEVELOPER') or hasRole('ROLE_APPROVER')")
+				.antMatchers("/user/new").access(" hasRole('ROLE_ADMIN')")
+				.antMatchers("/user/all*").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_DEVELOPER') or hasRole('ROLE_APPROVER')")
+				.antMatchers("/user/modify*").access("hasRole('ROLE_ADMIN')")
+				.antMatchers("/project/**").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_DEVELOPER') or hasRole('ROLE_APPROVER')")
+				.antMatchers("/api/**").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_DEVELOPER') or hasRole('ROLE_APPROVER')")
+				.antMatchers("/ticket/**").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_DEVELOPER') or hasRole('ROLE_APPROVER')")
 				.and()
 				.csrf().disable()
 				.formLogin()
