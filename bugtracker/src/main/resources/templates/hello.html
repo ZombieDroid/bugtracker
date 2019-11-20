@@ -10,7 +10,7 @@
         
         <script type = "text/javascript">
 			Ext.onReady(function(){ 
-				var menu = Ext.create('Ext.menu.Menu', {
+				/*var menu = Ext.create('Ext.menu.Menu', {
 					layout: 'hbox',
 					width: 300,
 					//height: 100,
@@ -28,7 +28,44 @@
 				
 				menu.on('click', function(menu, item){
 					alert('clicked -> ' + item.text);
-				});
+				});*/
+				
+				var menu = Ext.create('Ext.menu.Menu', {
+					layout: 'hbox',
+					width: 300,
+					margin: '0 0 10 0',
+					renderTo: Ext.getBody(),
+					floating: false,
+					items: [{
+						  xtype: 'container',
+						  layout: {
+							type: 'hbox',
+							align: 'middle',
+							pack: 'center'
+						  },
+						  items: [
+							{
+							  xtype: 'button',
+							  text: 'BUTTON 1',
+							  listeners: {
+								click: function () {
+													// Do something...
+													alert('clicked -> ' + this.text);
+												}
+							  }
+							},
+							{
+							  xtype: 'button',
+							  text: 'BUTTON 2',
+							  listeners: {
+								click: function () {
+													// Do something else!
+													alert('clicked -> ' + this.text);
+												}
+							  }
+							}
+						  ]
+						}] 
 			});
 		</script>
     </head>
