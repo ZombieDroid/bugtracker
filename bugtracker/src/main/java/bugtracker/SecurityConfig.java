@@ -37,7 +37,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		httpSecurity.authorizeRequests()
 				.antMatchers("/login*").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_DEVELOPER') or hasRole('ROLE_APPROVER')")
 				.antMatchers("/user/new").access(" hasRole('ROLE_ADMIN')")
-				.antMatchers("/user/all*").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_DEVELOPER') or hasRole('ROLE_APPROVER')")
+				.antMatchers("/user/all*").access("hasRole('ROLE_ADMIN') ")
 				.antMatchers("/user/modify*").access("hasRole('ROLE_ADMIN')")
 				.antMatchers("/project/**").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_DEVELOPER') or hasRole('ROLE_APPROVER')")
 				.antMatchers("/api/**").access("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN') or hasRole('ROLE_DEVELOPER') or hasRole('ROLE_APPROVER')")
