@@ -24,6 +24,13 @@
                     }
                 });
 
+                var getDate = function(date){
+                    if(date == null || date < 3){
+                        return '01 01 0000';
+                    }
+                    return date[0] + ' ' + date[1] + ' ' + date[2];
+                };
+
                 var userStore = Ext.create('Ext.data.Store', {
                     fields: ['id', 'name']
                 });
@@ -65,19 +72,22 @@
                 var s1date = Ext.create('Ext.form.Date', {
                     fieldLabel: 'S1 date',
                     width: 400,
-                    value: project.s1Time
+                    format: 'Y m d',
+                    value: getDate(project.s1Time)
                 });
 
                 var s2date = Ext.create('Ext.form.Date', {
                     fieldLabel: 'S2 date',
                     width: 400,
-                    value: project.s2Time
+                    format: 'Y m d',
+                    value: getDate(project.s2Time)
                 });
 
                 var s3date = Ext.create('Ext.form.Date', {
                     fieldLabel: 'S3 date',
                     width: 400,
-                    value: project.s3Time
+                    format: 'Y m d',
+                    value: getDate(project.s3Time)
                 });
 
                 Ext.Ajax.request({
@@ -120,7 +130,7 @@
                             method: 'POST',
                             jsonData: getProject(),
                             success: function (form, action) {
-                                // ToDo: redirect...
+                                window.location.assign("/project/all");
                             },
                             failure: function (form, action) {
                                 alert(form.responseText);
@@ -131,6 +141,7 @@
 
                 var getProject = function(){
                     return {
+                        id: project.id,
                         name: name.value,
                         description: desc.value,
                         defaultApproverId: approver.value,
