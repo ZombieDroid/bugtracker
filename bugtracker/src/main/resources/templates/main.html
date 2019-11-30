@@ -17,12 +17,7 @@
 
     <script type = "text/javascript">
 
-        /**
-         * This class is the main view for the application. It is specified in app.js as the
-         * "autoCreateViewport" property. That setting automatically applies the "viewport"
-         * plugin to promote that instance of this class to the body element.
-         */
-        Ext.define('ResponsiveApp.view.main.Main', {
+        Ext.define('BugtrackerApp.Main', {
             extend: 'Ext.tab.Panel',
 
             xtype: 'app-main',
@@ -37,7 +32,7 @@
                     align: 'stretchmax'
                 },
                 title: {
-                    text: 'MyApp',
+                    text: 'BugTracker',
                     flex: 0
                 },
                 glyph: 61
@@ -122,15 +117,10 @@
             }]
         });
 
-        /**
-         * The main application class. An instance of this class is created by app.js when it calls
-         * Ext.application(). This is the ideal place to handle application launch and initialization
-         * details.
-         */
-        Ext.define('ResponsiveApp.Application', {
+        Ext.define('BugtrackerApp.Application', {
             extend: 'Ext.app.Application',
 
-            name: 'ResponsiveApp',
+            name: 'BugtrackerApp',
 
             glyphFontFamily: 'Pictos'
         });
@@ -138,95 +128,18 @@
         Ext.onReady(function(){
 
             Ext.application({
-                name: 'ResponsiveApp',
+                name: 'BugtrackerApp',
 
-                extend: 'ResponsiveApp.Application',
+                extend: 'BugtrackerApp.Application',
 
-                autoCreateViewport: 'ResponsiveApp.view.main.Main'
+                autoCreateViewport: 'BugtrackerApp.Main'
 
-                //-------------------------------------------------------------------------
-                // Most customizations should be made to ResponsiveApp.Application. If you need to
-                // customize this file, doing so below this section reduces the likelihood
-                // of merge conflicts when upgrading to new versions of Sencha Cmd.
-                //-------------------------------------------------------------------------
             });
-
-            /*var menu = Ext.create('Ext.menu.Menu', {
-                layout: 'hbox',
-                width: 300,
-                //height: 100,
-                margin: '0 0 10 0',
-                renderTo: Ext.getBody(),
-                floating: false,
-                items: [{
-                    text: 'menu item 1',
-                },{
-                    text: 'menu item 2'
-                },{
-                    text: 'menu item 3'
-                }]
-            });
-
-            menu.on('click', function(menu, item){
-                alert('clicked -> ' + item.text);
-            });*/
-
-            /*
-            var menu = Ext.create('Ext.menu.Menu', {
-                layout: 'hbox',
-                width: 300,
-                margin: '0 0 10 0',
-                //renderTo: Ext.getBody(),
-                renderTo: "menu",
-                floating: false,
-                items: [{
-                    xtype: 'container',
-                    layout: {
-                        type: 'hbox',
-                        align: 'middle',
-                        pack: 'center'
-                    },
-                    items: [
-                        {
-                            xtype: 'button',
-                            text: 'BUTTON 1',
-                            listeners: {
-                                click: function () {
-                                    // Do something...
-                                    alert('clicked -> ' + this.text);
-                                }
-                            }
-                        },
-                        {
-                            xtype: 'button',
-                            text: 'BUTTON 2',
-                            listeners: {
-                                click: function () {
-                                    // Do something else!
-                                    alert('clicked -> ' + this.text);
-                                }
-                            }
-                        }
-                    ]
-                }]
-            });
-
-            */
-
         });
     </script>
 </head>
 <body>
-<!-- <th:block th:include="/menu"></th:block>-->
-<!--<div id = "content" >-->
-<!--    <div id="menu" />-->
-<!--    <div id="maindiv" />-->
-<!--    asdasd-->
-<!--    &lt;!&ndash;<h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>-->
-<!--    <form th:action="@{/logout}" method="post">-->
-<!--        <input type="submit" value="Sign Out"/>-->
-<!--    </form>&ndash;&gt;-->
-<!--</div>-->
+
 
 </body>
 </html>
