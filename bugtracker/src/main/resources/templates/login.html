@@ -36,7 +36,7 @@
                             var form = this.up('form').getForm();
                             form.submit({
                                 success: function(form, action) {
-                                    window.location.assign("/home");
+                                    window.location.assign("/main");
                                 },
                                 failure: function(form, action) {
                                     alert('Failed', action.result.msg);
