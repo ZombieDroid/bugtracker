@@ -87,18 +87,25 @@ Ext.define('BugtrackerApp.view.ProjectPanel', {
                 window.location.assign("/project");
             }
         }
+    },
+    removeAll : function(destroy){
+        var c;
+        while(c=this.items.first()){
+            this.remove(c, destroy);
+        }
     }
 });
 
 let projectPanel = Ext.create('BugtrackerApp.view.ProjectPanel', {
-    // renderTo: "projects"
+    // renderTo: "projectlistdiv"
 });
 
 let newButton = Ext.create('Ext.button.Button', {
     text: 'New',
-    handler: function(){
-        window.location.assign("/project/new");
-    }
+    handler: newproject
+    // handler: function(){
+    //     window.location.assign("/project/new");
+    // }
 });
 
 let updateProjectTable = function(searchText){
