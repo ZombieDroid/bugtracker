@@ -71,7 +71,7 @@ public class UserController {
         if (cc.getAuthentication() != null) {
             Authentication auth = cc.getAuthentication();
             try {
-                headers.setLocation(new URI("/project/all"));
+                headers.setLocation(new URI("/home"));
             } catch (URISyntaxException ignored) {}
         }
 

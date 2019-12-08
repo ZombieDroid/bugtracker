@@ -13,10 +13,11 @@
         Ext.onReady(function () {
             var loginpanel = Ext.create('Ext.form.Panel', {
                 region: 'center',
-                title: 'Login',
+                bodyStyle: 'background:transparent; padding-top:25px',
+                padding: 15,
                 standardSubmit:true,
-                width: 350,
-                height: 350,
+                width: 1024,
+                height:683,
                 url: '/login',
                 items: [{
                     xtype: 'textfield',
@@ -52,9 +53,13 @@
             });
             Ext.create('Ext.panel.Panel', {
                 renderTo: "maindiv",
-                width: 1000,
-                height:500,
-                layout: 'border',
+                frame: false,
+                border: false,
+                bodyStyle: {
+                    'background': 'url(/img/bug.jpg) !important'
+                },
+                width: 1024,
+                height:683,
                 items: [
                     {
                         region:'west', width: 140,
