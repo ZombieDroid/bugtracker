@@ -87,8 +87,9 @@ let newproject = function () {
     };
 
     Ext.create('Ext.Window', {
-        width: 500,
-        height:300,
+        width: 640,
+        height: 480,
+        padding: 15,
         title: 'New project',
         modal: true,
         items: [
