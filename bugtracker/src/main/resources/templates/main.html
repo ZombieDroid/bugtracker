@@ -15,7 +15,11 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/ext-all-debug.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/classic/theme-neptune/theme-neptune.js"></script>
 
+    <script type="text/javascript" src="js/projects.js"></script>
+
     <script type = "text/javascript">
+
+
 
         Ext.define('BugtrackerApp.Main', {
             extend: 'Ext.tab.Panel',
@@ -74,34 +78,15 @@
             },
 
             items: [{
-                title: 'Home',
+                title: 'Projects',
                 glyph: 72,
-                html:
-                    '<h2>Responsive Design Demo blah</h2>' +
-
-                    '<p>This example demonstrates how to make your app responsive to changes in ' +
-                    'screen size or orientation.  Applications that run on tablets often need to ' +
-                    'change the position and/or layout of navigational elements when the orientation ' +
-                    'changes (when the device is rotated). This application uses a build-in feature ' +
-                    'in Ext JS called <code>responsiveConfig</code> to make real-time changes to the ' +
-                    'navigation tab bar as the screen size changes.  We use "wide" to describe a ' +
-                    'situation where the screen width is larger than its height, and "tall" when the ' +
-                    'screen\'s height is larger than its width.</p>' +
-
-                    '<ul>' +
-                    '<li>Application header is docked to the left when "wide" and top when "tall."</li>' +
-                    '<li>Tab icons are left-aligned when "wide" and top-aligned when "tall."</li>' +
-                    '<li>Tab text is left-aligned when "wide" and centered when "tall."</li>' +
-                    '<li>Tabs stretch to fit the width of the tab bar when "wide", but have a ' +
-                    'uniform width of 100px when "tall".</li>' +
-                    '</ul>' +
-
-                    '<p>Try resizing the window in your desktop browser, or rotating your tablet ' +
-                    'to see it in action!</p>' +
-
-                    '<p>For more info on how to use responsiveConfig in your application, see the ' +
-                    'API Docs for <code>Ext.mixin.Responsive</code> and <code>Ext.plugin.Responsive ' +
-                    '</code>.</p>'
+                html: '<div id="projects" />',
+                items: [
+                    searchField,
+                    searchButton,
+                    projectPanel,
+                    newButton
+                ]
             }, {
                 title: 'Users',
                 glyph: 117,
@@ -135,6 +120,8 @@
                 autoCreateViewport: 'BugtrackerApp.Main'
 
             });
+
+            updateProjectTable("");
         });
     </script>
 </head>
