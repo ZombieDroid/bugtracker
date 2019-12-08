@@ -81,7 +81,7 @@
                         method: "POST",
                         jsonData: getTicket(),
                         success: function (form, action) {
-                            // ....
+                            window.location.assign("/ticket/all");
                         },
                         failure: function (form, action) {
                             alert(form.responseText);
@@ -94,11 +94,38 @@
                 return {
                     name: name.value,
                     description: desc.value,
-                    priority: tickePrio.getValue(),
+                    priority: ticketPrio.getValue(),
                     projectId: projects.getValue(),
                     type: ticketType.getValue()
                 }
             };
+
+            var reporterStore = Ext.create('Ext.data.Store', {
+                fields: ['id', 'name']
+            });
+
+            var reporters = Ext.create('Ext.form.ComboBox', {
+                fieldLabel: 'Reporter',
+                store: reporterStore,
+                queryMode: 'local',
+                displayField: 'name',
+                valueField: 'id'
+            });
+
+            Ext.Ajax.request({
+                url: '/api/user/getAllUser',
+                method: 'GET',
+                success: function (form, action) {
+                    allUser = JSON.parse(form.responseText);
+                    for(var i=0; i<allUser.length; i++){
+                        reporterStore.add({id: allUser[i].id, name: allUser[i].name});
+                    }
+                    reporters.setValue(allUser[0]);
+                },
+                failure: function (form, action) {
+                    alert(form.responseText);
+                }
+            });
 
             Ext.create('Ext.panel.Panel', {
                 renderTo: Ext.getBody(),
@@ -112,6 +139,7 @@
                     name,
                     desc,
                     projects,
+                    reporters,
                     ticketPrio,
                     ticketType
                 ],

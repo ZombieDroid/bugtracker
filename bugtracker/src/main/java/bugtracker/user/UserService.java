@@ -53,6 +53,8 @@ public class UserService implements UserDetailsService {
         return userRepository.findUserEntityById(id);
     }
 
+    public UserEntity getUserByName(String name) { return userRepository.findByName(name); }
+
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username){

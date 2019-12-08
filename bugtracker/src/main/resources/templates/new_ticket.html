@@ -23,10 +23,6 @@
                 ]
             });
 
-            var statusStore = Ext.create('Ext.data.Store', {
-                fields: ['id', 'name']
-            });
-
             var typeStore = Ext.create('Ext.data.Store', {
                 fields: ['type'],
                 data : [
@@ -38,14 +34,6 @@
             var projects = Ext.create('Ext.form.ComboBox', {
                 fieldLabel: 'Project',
                 store: projectStore,
-                queryMode: 'local',
-                displayField: 'name',
-                valueField: 'id'
-            });
-
-            var statuses = Ext.create('Ext.form.ComboBox', {
-                fieldLabel: 'Status',
-                store: statusStore,
                 queryMode: 'local',
                 displayField: 'name',
                 valueField: 'id'
@@ -108,7 +96,6 @@
                     description: desc.value,
                     priority: ticketPrio.getValue(),
                     projectId: projects.getValue(),
-                    statusId: statuses.getValue(),
                     type: ticketType.getValue()
                 }
             };
@@ -152,7 +139,7 @@
                     name,
                     desc,
                     projects,
-                    statuses,
+                    reporters,
                     ticketPrio,
                     ticketType
                 ],
@@ -171,22 +158,6 @@
                     }
 
                     projects.setValue(allProjects[0].id);
-                },
-                failure: function (form, action) {
-                    alert(form.responseText);
-                }
-            });
-
-            Ext.Ajax.request({
-                url: '/api/status/all',
-                method: 'GET',
-                success: function (form, action) {
-                    allStatuses = JSON.parse(form.responseText);
-                    for(var i=0; i<allStatuses.length; i++){
-                        statusStore.add({id: allStatuses[i].id, name: allStatuses[i].name});
-                    }
-
-                    statuses.setValue(allStatuses[0].id);
                 },
                 failure: function (form, action) {
                     alert(form.responseText);

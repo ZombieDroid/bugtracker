@@ -6,24 +6,24 @@ import javax.inject.Inject;
 import java.util.List;
 
 @Service
-class StatusService {
+public class StatusService {
 
     @Inject
     StatusRepository statusRepository;
 
-    StatusEntity createStatus(StatusEntity statusEntity) {
+    public StatusEntity createStatus(StatusEntity statusEntity) {
         return statusRepository.save(statusEntity);
     }
 
-    StatusEntity getStatusById(Long id) {
+    public StatusEntity getStatusById(Long id) {
         return statusRepository.findStatusById(id);
     }
 
-    List<StatusEntity> getAllStatus() {
+    public List<StatusEntity> getAllStatus() {
         return statusRepository.findAll();
     }
 
-    List<StatusEntity> searchByName(String text) {
+    public List<StatusEntity> searchByName(String text) {
         return statusRepository.findByNameContaining(text);
     }
 }
