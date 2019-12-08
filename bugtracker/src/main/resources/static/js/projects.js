@@ -25,60 +25,61 @@ let searchButton = Ext.create('Ext.button.Button', {
 
 Ext.define('BugtrackerApp.view.ProjectPanel', {
     extend: 'Ext.grid.Panel',
-    // height: 600,
-    // width: 1000,
     title: 'Projects',
     store: projectStore,
+    resizable: true,
 
-    columns: [  {
-        text: 'Id',
-        // columnWidth: 0.5,
-        sortable: false,
-        hideable: false,
-        dataIndex: 'id'
-    },{
-        text: 'Name',
-        // width: 100,
-        sortable: false,
-        hideable: false,
-        dataIndex: 'name'
-    },{
-        text: 'Description',
-        // width: 100,
-        sortable: false,
-        hideable: false,
-        dataIndex: 'description'
-    },{
-        text: 'Approver',
-        // width: 100,
-        sortable: false,
-        hideable: false,
-        dataIndex: 'approver'
-    },{
-        text: 'Developer',
-        // width: 100,
-        sortable: false,
-        hideable: false,
-        dataIndex: 'assignee'
-    },{
-        text: 'S1',
-        // width: 100,
-        sortable: false,
-        hideable: false,
-        dataIndex: 's1'
-    },{
-        text: 'S2',
-        // width: 100,
-        sortable: false,
-        hideable: false,
-        dataIndex: 's2'
-    },{
-        text: 'S3',
-        // width: 100,
-        sortable: false,
-        hideable: false,
-        dataIndex: 's3'
-    }],
+    columns: {
+        items: [{
+            text: 'Id',
+            flex: 5 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'id'
+        }, {
+            text: 'Name',
+            flex: 10 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'name'
+        }, {
+            text: 'Description',
+            flex: 35 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'description'
+        }, {
+            text: 'Approver',
+            flex: 10 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'approver'
+        }, {
+            text: 'Developer',
+            flex: 10 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'assignee'
+        }, {
+            text: 'S1',
+            flex: 10 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 's1'
+        }, {
+            text: 'S2',
+            flex: 10 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 's2'
+        }, {
+            text: 'S3',
+            flex: 10 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 's3'
+        }]
+    },
     viewConfig : {
         listeners : {
             itemdblclick : function(view, cell, cellIndex, record, row, rowIndex, e) {
@@ -99,24 +100,6 @@ let newButton = Ext.create('Ext.button.Button', {
         window.location.assign("/project/new");
     }
 });
-
-// Ext.create('Ext.panel.Panel', {
-//     renderTo: Ext.getBody(),
-//     width: 1000,
-//     height: 600,
-//     layout: {
-//         type: 'vbox',
-//         padding: 5
-//     },
-//     items: [
-//         searchField,
-//         searchButton,
-//         projectPanel
-//     ],
-//     buttons: [
-//         newButton
-//     ]
-// });
 
 let updateProjectTable = function(searchText){
     Ext.Ajax.request({
@@ -178,5 +161,4 @@ let getTime = function(timeArr){
     return timeArr[0] + "-" + timeArr[1] + "-" + timeArr[2];
 };
 
-// updateProjectTable("");
 
