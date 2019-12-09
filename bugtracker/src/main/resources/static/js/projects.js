@@ -112,12 +112,11 @@ let projectdetails = function() {
                 method: 'POST',
                 jsonData: getProject(),
                 success: function (form, action) {
-                    this.close();
-                    // window.location.assign("/project/all");
+                    projectdetailswindow.close();
+                    updateProjectTable("");
                 },
                 failure: function (form, action) {
-                    this.close();
-                    // alert(form.responseText);
+                    alert(form.responseText);
                 }
             });
         }
@@ -136,7 +135,7 @@ let projectdetails = function() {
         }
     };
 
-    Ext.create('Ext.Window', {
+    var projectdetailswindow = Ext.create('Ext.Window', {
         width: 1000,
         height: 500,
         padding: 15,
@@ -230,7 +229,8 @@ let newproject = function () {
                 method: "POST",
                 jsonData: getProject(),
                 success: function (form, action) {
-                    window.location.assign("/project/all");
+                    newprojectwindow.close();
+                    updateProjectTable('');
                 },
                 failure: function (form, action) {
                     alert(form.responseText);
@@ -251,7 +251,7 @@ let newproject = function () {
         }
     };
 
-    Ext.create('Ext.Window', {
+    var newprojectwindow = Ext.create('Ext.Window', {
         width: 640,
         height: 480,
         padding: 15,
