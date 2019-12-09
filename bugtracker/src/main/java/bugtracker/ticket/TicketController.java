@@ -51,18 +51,22 @@ public class TicketController {
     private static final Hashtable<Long, List<NextStatus>> nextStatusTable;
 
     static{
+        //key= current status, value= next status 1. toStatus 2. user type, bug/feature/both. Need to cleancode this
         nextStatusTable = new Hashtable<>();
 
         nextStatusTable.put(133L,
                 Arrays.asList(new NextStatus(130L,1L,0L), new NextStatus(129L,3L,1L), new NextStatus(134L,3L,1L)));
 
+        //XXX status, who and ticket type 0 bug, 1 feature, 2 both (neeed to be fixed)
         nextStatusTable.put(134L, Arrays.asList(new NextStatus(133L,2L,1L)));
 
         nextStatusTable.put(129L, Arrays.asList(new NextStatus(130L,1L,1L)));
 
-        nextStatusTable.put(130L, Arrays.asList(new NextStatus(132L,1L,2L)));
+        nextStatusTable.put(130L, Arrays.asList(new NextStatus(132L,1L,2L),  new NextStatus(135L,1L,2L),  new NextStatus(136L,1L,2L)));
 
         nextStatusTable.put(132L, Arrays.asList(new NextStatus(133L,2L,2L), new NextStatus(131L,2L,2L)));
+        nextStatusTable.put(135L, Arrays.asList(new NextStatus(133L,2L,2L)));
+        nextStatusTable.put(136L, Arrays.asList(new NextStatus(130L,1L,2L)));
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST,
