@@ -58,25 +58,25 @@ let projectdetails = function() {
         value: project.description
     });
 
-    var s1date = Ext.create('Ext.form.Date', {
+    var s1date = Ext.create('Ext.form.field.Number', {
         fieldLabel: 'S1 date',
         width: 400,
-        format: 'Y m d',
-        value: getDate(project.s1Time)
+        minValue: 0,
+        value: project.s1Time
     });
 
-    var s2date = Ext.create('Ext.form.Date', {
+    var s2date = Ext.create('Ext.form.field.Number', {
         fieldLabel: 'S2 date',
         width: 400,
-        format: 'Y m d',
-        value: getDate(project.s2Time)
+        minValue: 0,
+        value: project.s2Time
     });
 
-    var s3date = Ext.create('Ext.form.Date', {
+    var s3date = Ext.create('Ext.form.field.Number', {
         fieldLabel: 'S3 date',
         width: 400,
-        format: 'Y m d',
-        value: getDate(project.s3Time)
+        minValue: 0,
+        value: project.s3Time
     });
 
     Ext.Ajax.request({
@@ -205,22 +205,25 @@ let newproject = function () {
         bodyPadding: 10
     });
 
-    var s1date = Ext.create('Ext.form.Date', {
+    var s1date = Ext.create('Ext.form.field.Number', {
         fieldLabel: 'S1 date',
         width: 400,
-        value: new Date()
+        minValue: 0,
+        value: 0
     });
 
-    var s2date = Ext.create('Ext.form.Date', {
+    var s2date = Ext.create('Ext.form.field.Number', {
         fieldLabel: 'S2 date',
         width: 400,
-        value: new Date()
+        minValue: 0,
+        value: 0
     });
 
-    var s3date = Ext.create('Ext.form.Date', {
+    var s3date = Ext.create('Ext.form.field.Number', {
         fieldLabel: 'S3 date',
         width: 400,
-        value: new Date()
+        minValue: 0,
+        value: 0
     });
 
     var createButton = Ext.create('Ext.Button', {
@@ -463,8 +466,8 @@ let fillProjectStore = function (){
         }
 
         projectStore.add({id: projects[i].id, name: projects[i].name, description: projects[i].description,
-            approver: approver, assignee: assignee, s1: getTime(projects[i].s1Time),
-            s2: getTime(projects[i].s2Time), s3: getTime(projects[i].s3Time) });
+            approver: approver, assignee: assignee, s1: projects[i].s1Time,
+            s2: projects[i].s2Time, s3: projects[i].s3Time });
     }
 };
 
