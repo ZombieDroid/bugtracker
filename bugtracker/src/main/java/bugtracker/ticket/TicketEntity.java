@@ -18,6 +18,7 @@ public class TicketEntity {
     private Long priority;
     private String description;
     private Long reporterId;
+    private Long ownerId;
     private Long statusId;
     private Long projectId;
     private LocalDateTime spentTime;
@@ -61,6 +62,14 @@ public class TicketEntity {
 
     public void setReporterId(Long reporterId) {
         this.reporterId = reporterId;
+    }
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
     }
 
     public Long getStatusId() {
