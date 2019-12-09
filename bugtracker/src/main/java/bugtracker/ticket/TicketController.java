@@ -2,21 +2,26 @@ package bugtracker.ticket;
 
 import bugtracker.project.ProjectEntity;
 import bugtracker.project.ProjectService;
+import bugtracker.status.StatusEntity;
+import bugtracker.status.StatusService;
 import bugtracker.user.UserEntity;
 import bugtracker.user.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
 import java.time.LocalDateTime;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/ticket")
@@ -31,6 +36,35 @@ public class TicketController {
     @Inject
     ProjectService projectService;
 
+    @Inject
+    StatusService statusService;
+
+    @AllArgsConstructor
+    @Getter
+    private static class NextStatus
+    {
+        private Long status;
+        private Long userType;
+        private Long ticketType;
+    }
+
+    private static final Hashtable<Long, List<NextStatus>> nextStatusTable;
+
+    static{
+        nextStatusTable = new Hashtable<>();
+
+        nextStatusTable.put(133L,
+                Arrays.asList(new NextStatus(130L,1L,0L), new NextStatus(129L,3L,1L), new NextStatus(134L,3L,1L)));
+
+        nextStatusTable.put(134L, Arrays.asList(new NextStatus(133L,2L,1L)));
+
+        nextStatusTable.put(129L, Arrays.asList(new NextStatus(130L,1L,1L)));
+
+        nextStatusTable.put(130L, Arrays.asList(new NextStatus(132L,1L,2L)));
+
+        nextStatusTable.put(132L, Arrays.asList(new NextStatus(133L,2L,2L), new NextStatus(131L,2L,2L)));
+    }
+
     @RequestMapping(value = "/create", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody()
@@ -39,6 +73,7 @@ public class TicketController {
             return new ResponseEntity<>("Ticket must have a name", HttpStatus.BAD_REQUEST);
         }
         try {
+            ticket.setStatusId(133L);    // pending
             ticketService.createTicket(ticket);
         } catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -57,6 +92,20 @@ public class TicketController {
 
     @PostMapping("/update")
     public ResponseEntity<String> updateTicket(@RequestBody TicketEntity ticket) {
+        TicketEntity currTicket = ticketService.getTicketById(ticket.getId());
+        if(!currTicket.getStatusId().equals(ticket.getStatusId())){
+            boolean isValidNextStatus = false;
+            for(NextStatus ns : nextStatusTable.get(currTicket.getStatusId())){
+                if(ticket.getStatusId().equals(ns.status)){
+                    isValidNextStatus = true;
+                    break;
+                }
+            }
+            if(!isValidNextStatus){
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+        }
+
         try{
             ticketService.saveTicket(ticket);
         } catch (Exception e){
@@ -91,22 +140,6 @@ public class TicketController {
         return new ResponseEntity<>(name, HttpStatus.OK);
     }
 
-    @GetMapping("/getStatus/{id}")
-    public ResponseEntity<String> getStatusById(@PathVariable long id) throws Exception {
-        String status = "";
-        switch((short)id){
-            case 0: status = "Open";
-                break;
-            case 1: status = "In Progress";
-                break;
-            case 2: status = "Done";
-                break;
-            default:
-                throw new Exception("Unknown status: " + id);
-        }
-        return new ResponseEntity<>(status, HttpStatus.OK);
-    }
-
     @GetMapping("/getType/{id}")
     public ResponseEntity<String> getTypeById(@PathVariable long id) throws Exception {
         String type = "";
@@ -137,5 +170,55 @@ public class TicketController {
             }
         }
         return new ResponseEntity<>(tickets, HttpStatus.OK);
+    }
+
+    @GetMapping("validStatuses/{ticketId}")
+    public ResponseEntity<List<StatusEntity>> getValidStatuses(@PathVariable Long ticketId){
+        List<StatusEntity> statuses = new LinkedList<>();
+        try{
+            TicketEntity ticket = ticketService.getTicketById(ticketId);
+            statuses.add(statusService.getStatusById(ticket.getStatusId()));
+            if(isCurrentUserAssignedToTicket(ticket)){
+                StatusEntity ticketStatus = statusService.getStatusById(ticket.getStatusId());
+                for(NextStatus ns : nextStatusTable.get(ticketStatus.getId())){
+                    if(isCurrentUserValid(ns.userType) &&
+                            (ticket.getType().equals(ns.ticketType) || ns.ticketType.equals(2L))){
+                        statuses.add(statusService.getStatusById(ns.status));
+                    }
+                }
+            }
+        } catch(Exception e){
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(statuses, HttpStatus.OK);
+    }
+
+    private boolean isCurrentUserValid(Long validId){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        String username = auth.getName();
+
+        UserEntity user = userService.getUserByName(username);
+
+        if(user != null){
+            return user.getType() == validId;
+        }
+
+        return false;
+    }
+
+    private boolean isCurrentUserAssignedToTicket(TicketEntity ticket){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        String username = auth.getName();
+
+        UserEntity user = userService.getUserByName(username);
+
+        if(user != null){
+            return user.getId() == ticket.getReporterId() ||
+                    user.getId() == ticket.getOwnerId();
+        }
+
+        return false;
     }
 }

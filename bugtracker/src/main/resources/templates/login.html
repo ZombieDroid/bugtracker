@@ -4,8 +4,6 @@
 <head>
     <meta charset="utf-8"/>
     <title>Login</title>
-    <link rel="stylesheet" type="text/css" href="/css/styles.css" />
-    <!-- <link rel="stylesheet" th:href="@{/css/styles.css}" /> -->
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/classic/theme-neptune/resources/theme-neptune-all.css">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/ext-all-debug.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/classic/theme-neptune/theme-neptune.js"></script>
@@ -13,10 +11,11 @@
         Ext.onReady(function () {
             var loginpanel = Ext.create('Ext.form.Panel', {
                 region: 'center',
-                title: 'Login',
+                bodyStyle: 'background:transparent; padding-top:35px',
+                padding: 15,
                 standardSubmit:true,
-                width: 350,
-                height: 350,
+                width: 1024,
+                height:683,
                 url: '/login',
                 items: [{
                     xtype: 'textfield',
@@ -36,7 +35,7 @@
                             var form = this.up('form').getForm();
                             form.submit({
                                 success: function(form, action) {
-                                    window.location.assign("/home");
+                                    window.location.assign("/main");
                                 },
                                 failure: function(form, action) {
                                     alert('Failed', action.result.msg);
@@ -52,9 +51,13 @@
             });
             Ext.create('Ext.panel.Panel', {
                 renderTo: "maindiv",
-                width: 1000,
-                height:500,
-                layout: 'border',
+                frame: false,
+                border: false,
+                bodyStyle: {
+                    'background': 'url(/img/bug.jpg) !important'
+                },
+                width: 1024,
+                height:683,
                 items: [
                     {
                         region:'west', width: 140,

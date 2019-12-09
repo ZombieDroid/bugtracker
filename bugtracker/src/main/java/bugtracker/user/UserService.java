@@ -53,6 +53,8 @@ public class UserService implements UserDetailsService {
         return userRepository.findUserEntityById(id);
     }
 
+    public UserEntity getUserByName(String name) { return userRepository.findByName(name); }
+
     @Override
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username){
@@ -72,4 +74,5 @@ public class UserService implements UserDetailsService {
     public List<UserEntity> getUsersByType(Integer type){
         return userRepository.findByType(type);
     }
+    public List<UserEntity> searchByName(String text) { return userRepository.findByNameContaining(text); }
 }

@@ -17,9 +17,9 @@ public class ProjectEntity {
     private String description;
     private Long defaultApproverId;
     private Long defaultDeveloperId;
-    private LocalDateTime s1Time;
-    private LocalDateTime s2Time;
-    private LocalDateTime s3Time;
+    private Long s1Time;
+    private Long s2Time;
+    private Long s3Time;
 
     public long getId() {
         return id;
@@ -61,27 +61,27 @@ public class ProjectEntity {
         this.defaultDeveloperId = defaultDeveloperId;
     }
 
-    public LocalDateTime getS1Time() {
+    public Long getS1Time() {
         return s1Time;
     }
 
-    public void setS1Time(LocalDateTime s1Time) {
+    public void setS1Time(Long s1Time) {
         this.s1Time = s1Time;
     }
 
-    public LocalDateTime getS2Time() {
+    public Long getS2Time() {
         return s2Time;
     }
 
-    public void setS2Time(LocalDateTime s2Time) {
+    public void setS2Time(Long s2Time) {
         this.s2Time = s2Time;
     }
 
-    public LocalDateTime getS3Time() {
+    public Long getS3Time() {
         return s3Time;
     }
 
-    public void setS3Time(LocalDateTime s3Time) {
+    public void setS3Time(Long s3Time) {
         this.s3Time = s3Time;
     }
 }

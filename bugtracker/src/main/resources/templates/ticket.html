@@ -169,7 +169,7 @@
                 });
 
                 Ext.Ajax.request({
-                    url: '/api/status/all',
+                    url: '/api/ticket/validStatuses/' + ticket.id,
                     method: 'GET',
                     success: function (form, action) {
                         allStatuses = JSON.parse(form.responseText);
