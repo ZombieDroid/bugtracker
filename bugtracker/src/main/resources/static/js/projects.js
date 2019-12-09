@@ -13,13 +13,6 @@ let projectdetails = function() {
         }
     });
 
-    var getDate = function (date) {
-        if (date == null || date < 3) {
-            return '01 01 0000';
-        }
-        return date[0] + ' ' + date[1] + ' ' + date[2];
-    };
-
     var userStore = Ext.create('Ext.data.Store', {
         fields: ['id', 'name']
     });
@@ -469,13 +462,6 @@ let fillProjectStore = function (){
             approver: approver, assignee: assignee, s1: projects[i].s1Time,
             s2: projects[i].s2Time, s3: projects[i].s3Time });
     }
-};
-
-let getTime = function(timeArr){
-    if(timeArr == null || timeArr.length < 3){
-        return "-";
-    }
-    return timeArr[0] + "-" + timeArr[1] + "-" + timeArr[2];
 };
 
 
