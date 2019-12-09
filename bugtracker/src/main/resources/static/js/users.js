@@ -325,7 +325,8 @@ let searchUserPanel = Ext.create('Ext.panel.Panel', {
 
 let updateUserTable = function(searchText){
     Ext.Ajax.request({
-        url: "/api/user/all/",
+        // url: "/api/user/all/",
+        url: "/api/user/searchUsers/" + searchText,
         method: "GET",
         success: function (form, action){
             users = JSON.parse(form.responseText);
