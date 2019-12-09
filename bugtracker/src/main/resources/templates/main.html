@@ -16,6 +16,7 @@
 
     <script type="text/javascript" src="js/projects.js"></script>
     <script type="text/javascript" src="js/users.js"></script>
+    <script type="text/javascript" src="js/tickets.js"></script>
 
     <script type = "text/javascript">
 
@@ -41,8 +42,14 @@
                 }]).concat([{
                     title: 'Tickets',
                     glyph: 61,
-                    html: "alma",
-                    load: function(){}
+                    items: [
+                        searchTicketPanel,
+                        ticketPanel,
+                        newTicketButton
+                    ],
+                    load: function(){
+                        updateTicketTable("");
+                    }
 
                 }]).concat(roles.indexOf("ROLE_ADMIN") >= 0 ? [{
                     title: 'Users',
