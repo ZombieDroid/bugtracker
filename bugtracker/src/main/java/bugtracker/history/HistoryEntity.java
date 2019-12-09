@@ -14,8 +14,8 @@ public class HistoryEntity {
     private long id;
     private int objectId;
     private String eventDescription;
-    private int initialSatusId;
-    private int targetStatusId;
+    private long initialStatusId;
+    private long targetStatusId;
     private String freeText;
 
 
@@ -43,19 +43,19 @@ public class HistoryEntity {
         this.eventDescription = eventDescription;
     }
 
-    public int getInitialSatusId() {
-        return initialSatusId;
+    public long getInitialStatusId() {
+        return initialStatusId;
     }
 
-    public void setInitialSatusId(int initialSatusId) {
-        this.initialSatusId = initialSatusId;
+    public void setInitialStatusId(long initialSatusId) {
+        this.initialStatusId = initialSatusId;
     }
 
-    public int getTargetStatusId() {
+    public long getTargetStatusId() {
         return targetStatusId;
     }
 
-    public void setTargetStatusId(int targetStatusId) {
+    public void setTargetStatusId(long targetStatusId) {
         this.targetStatusId = targetStatusId;
     }
 
