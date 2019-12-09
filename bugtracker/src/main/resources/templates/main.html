@@ -27,7 +27,7 @@
                 this.items = []
                     .concat([{
                     title: 'Projects',
-                    glyph: 72,
+                    glyph: "M".charCodeAt(0),
                     html: '<div id="projectlistdiv" /><div id="newprojectdiv" />',
                     items: [
                         searchPanel,
@@ -40,7 +40,7 @@
 
                 }]).concat([{
                     title: 'Tickets',
-                    glyph: 85,
+                    glyph: 61,
                     html: "alma",
                     load: function(){}
 
@@ -77,7 +77,7 @@
                     text: 'BugTracker',
                     flex: 0
                 },
-                glyph: 61
+                iconCls: 'bugicon'
             },
 
             tabBar: {

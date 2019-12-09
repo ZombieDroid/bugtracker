@@ -1,4 +1,13 @@
+.bugicon {
+    background-image: url("/img/bug-malware-svgrepo-com.svg");
+    background-size: 100% 100%;
+    width: 50px !important;
+    height: 50px !important;
+}
 
+.x-vertical.x-header .x-title-rotate-none.x-title-align-left > .x-title-item {
+    vertical-align: middle !important;
+}
 
 .x-size-monitored {
     position: relative
