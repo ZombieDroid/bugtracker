@@ -20,10 +20,57 @@
 
     <script type = "text/javascript">
 
-
+        var roles = [];
 
         Ext.define('BugtrackerApp.Main', {
             extend: 'Ext.tab.Panel',
+
+            constructor : function(){
+                // console.log(roles);
+                // debugger;
+                this.items = [{
+                    title: 'Valami',
+                    glyph: 117,
+                    html: "alma",
+                    load: function(){}
+                }, {
+                    title: 'Projects',
+                    glyph: 72,
+                    html: '<div id="projectlistdiv" /><div id="newprojectdiv" />',
+                    items: [
+                        searchField,
+                        searchButton,
+                        projectPanel,
+                        newButton
+                    ],
+                    load: function(){
+                        updateProjectTable("");
+                    }
+                }].concat(roles.indexOf("ROLE_ADMIN") >= 0 ? [{
+                    title: 'Users',
+                    glyph: 117,
+                    html: "alma",
+                    load: function(){}
+                }, {
+                    title: 'Groups',
+                    glyph: 85,
+                    html: "alma",
+                    load: function(){}
+                }] : []).concat([{
+                    title: 'Settings',
+                    glyph: 42,
+                    html: "alma",
+                    load: function(){}
+                }, {
+                    title: 'Logout',
+                    glyph: 115,
+                    html: 'Goodbye!',
+                    load: function(){
+                        window.location.assign("/logout");
+                    }
+                }]);
+                this.callParent(arguments);
+            },
 
             xtype: 'app-main',
 
@@ -78,48 +125,6 @@
                 }
             },
 
-            items: [{
-                title: 'Valami',
-                glyph: 117,
-                html: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                load: function(){}
-            },  {
-                title: 'Projects',
-                glyph: 72,
-                html: '<div id="projectlistdiv" /><div id="newprojectdiv" />',
-                items: [
-                    searchField,
-                    searchButton,
-                    projectPanel,
-                    newButton
-                ],
-                load: function(){
-                    updateProjectTable("");
-                }
-            }, {
-                title: 'Users',
-                glyph: 117,
-                html: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                load: function(){}
-            }, {
-                title: 'Groups',
-                glyph: 85,
-                html: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                load: function(){}
-            }, {
-                title: 'Settings',
-                glyph: 42,
-                html: 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-                load: function(){}
-            }, {
-                title: 'Logout',
-                glyph: 115,
-                html: 'Goodbye!',
-                load: function(){
-                    window.location.assign("/logout");
-                }
-            }],
-
             listeners: {
                 'tabchange': function(tabPanel, tab) {
                     tab.load();
@@ -140,13 +145,25 @@
 
         Ext.onReady(function(){
 
-            Ext.application({
-                name: 'BugtrackerApp',
+            Ext.Ajax.request({
+                url: '/api/user/current/roles',
+                method: 'GET',
+                success: function (form, action) {
+                    roles = JSON.parse(form.responseText);
 
-                extend: 'BugtrackerApp.Application',
+                    Ext.application({
+                        name: 'BugtrackerApp',
 
-                autoCreateViewport: 'BugtrackerApp.Main'
+                        extend: 'BugtrackerApp.Application',
 
+                        autoCreateViewport: 'BugtrackerApp.Main'
+
+                    });
+
+                },
+                failure: function (form, action) {
+                    window.location.assign("/login");
+                }
             });
 
         });

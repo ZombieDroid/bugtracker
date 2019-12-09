@@ -6,13 +6,19 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import javax.inject.Inject;
+import javax.validation.constraints.Null;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping("/api/user")
@@ -86,5 +92,15 @@ public class UserController {
     @GetMapping("/getAllUser")
     public ResponseEntity<List<UserEntity>> getAllSimpleUser(){
         return new ResponseEntity<>(userService.getUsersByType(2), HttpStatus.OK);
+    }
+
+    @GetMapping("/current/roles")
+    public ResponseEntity<List<String>> getCurrentUser(Authentication authentication){
+        if (authentication != null) {
+            BTUserDetails principal = (BTUserDetails) authentication.getPrincipal();
+            return new ResponseEntity<>(principal.getAuthorities().stream().map(t -> ((GrantedAuthority) t).getAuthority()).collect(toList()), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
     }
 }
