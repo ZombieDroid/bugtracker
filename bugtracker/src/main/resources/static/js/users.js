@@ -197,6 +197,7 @@ let newuser = function () {
         height: 500,
         padding: 15,
         modal: true,
+        title: "New user",
         layout: {
             type: 'vbox',
             padding: 5
