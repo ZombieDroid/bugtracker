@@ -333,8 +333,18 @@ let searchField = Ext.create('Ext.form.TextField', {
 
 let searchButton = Ext.create('Ext.button.Button', {
     text: 'Search',
+    margin: "0 15 0 0",
     handler: function(){
         projectStore.removeAll();
+        updateProjectTable(searchField.value);
+    }
+});
+
+let searchResetButton = Ext.create('Ext.button.Button', {
+    text: 'Reset',
+    handler: function(){
+        projectStore.removeAll();
+        searchField.setValue('');
         updateProjectTable(searchField.value);
     }
 });
@@ -347,7 +357,8 @@ let searchPanel = Ext.create('Ext.panel.Panel', {
     },
     items: [
         searchField,
-        searchButton
+        searchButton,
+        searchResetButton
     ]
 });
 
