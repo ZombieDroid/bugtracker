@@ -320,7 +320,15 @@ let projectStore = Ext.create('Ext.data.Store', {
 
 let searchField = Ext.create('Ext.form.TextField', {
     fieldLabel: 'Search',
-    margin: "0 15 0 0"
+    margin: "0 15 0 0",
+    listeners: {
+        specialkey: function(f,e){
+            if(e.getKey() == e.ENTER){
+                projectStore.removeAll();
+                updateProjectTable(searchField.value);
+            }
+        }
+    }
 });
 
 let searchButton = Ext.create('Ext.button.Button', {
