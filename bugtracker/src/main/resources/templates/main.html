@@ -28,12 +28,9 @@
             constructor : function(){
                 // console.log(roles);
                 // debugger;
-                this.items = [{
-                    title: 'Valami',
-                    glyph: 117,
-                    html: "alma",
-                    load: function(){}
-                }, {
+
+                this.items = []
+                    .concat([{
                     title: 'Projects',
                     glyph: 72,
                     html: '<div id="projectlistdiv" /><div id="newprojectdiv" />',
@@ -46,29 +43,28 @@
                     load: function(){
                         updateProjectTable("");
                     }
-                }].concat(roles.indexOf("ROLE_ADMIN") >= 0 ? [{
-                    title: 'Users',
-                    glyph: 117,
-                    html: "alma",
-                    load: function(){}
-                }, {
-                    title: 'Groups',
+
+                }]).concat([{
+                    title: 'Tickets',
                     glyph: 85,
                     html: "alma",
                     load: function(){}
-                }] : []).concat([{
-                    title: 'Settings',
-                    glyph: 42,
+
+                }]).concat(roles.indexOf("ROLE_ADMIN") >= 0 ? [{
+                    title: 'Users',
+                    glyph: 85,
                     html: "alma",
                     load: function(){}
-                }, {
+
+                }]:[]).concat({
                     title: 'Logout',
                     glyph: 115,
                     html: 'Goodbye!',
                     load: function(){
                         window.location.assign("/logout");
                     }
-                }]);
+                });
+
                 this.callParent(arguments);
             },
 
