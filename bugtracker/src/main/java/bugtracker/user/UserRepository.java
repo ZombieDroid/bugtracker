@@ -16,6 +16,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     List<UserEntity> findByType(Integer type);
 
+    List<UserEntity> findByNameContaining(String text);
+
     UserEntity findByName(String name);
 
 }

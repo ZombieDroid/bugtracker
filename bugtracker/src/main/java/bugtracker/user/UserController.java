@@ -103,4 +103,15 @@ public class UserController {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
         }
     }
+
+    @GetMapping("/searchUsers/")
+    public ResponseEntity<List<UserEntity>> searchAllUsers(){
+        return new ResponseEntity<>(userService.getAllUser(), HttpStatus.OK);
+    }
+
+    @GetMapping("/searchUsers/{searchText}")
+    public ResponseEntity<List<UserEntity>> searchUsers(@PathVariable String searchText){
+        List<UserEntity> users = userService.searchByName(searchText);
+        return new ResponseEntity<>(users, HttpStatus.OK);
+    }
 }
