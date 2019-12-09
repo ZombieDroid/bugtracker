@@ -1,3 +1,361 @@
+let ticketdetails = function() {
+    var ticket = {};
+
+    Ext.Ajax.request({
+        url: '/api/ticket/'+localStorage.getItem("ticketId"),
+        method: 'GET',
+        async: false,
+        success: function (form, action) {
+            ticket = JSON.parse(form.responseText);
+        },
+        failure: function (form, action) {
+            alert(form.responseText);
+        }
+    });
+
+    var name = Ext.create('Ext.form.TextField',{
+        value: ticket.name,
+        fieldLabel: "Name",
+        allowBlank: false
+    });
+
+    var desc = Ext.create('Ext.form.TextArea', {
+        value: ticket.description,
+        fieldLabel: "Description"
+    });
+
+    var projectStore = Ext.create('Ext.data.Store', {
+        fields: ['id', 'name']
+    });
+
+    var reporterStore = Ext.create('Ext.data.Store', {
+        fields: ['id', 'name']
+    });
+
+    var priorityStore = Ext.create('Ext.data.Store', {
+        fields: ['priority'],
+        data : [
+            {"value":0, "name":"S1"},
+            {"value":1, "name":"S2"},
+            {"value":2, "name":"S3"}
+        ]
+    });
+
+    var typeStore = Ext.create('Ext.data.Store', {
+        fields: ['type'],
+        data : [
+            {"value":0, "name":"Feature"},
+            {"value":1, "name":"Bug"}
+        ]
+    });
+
+    var projects = Ext.create('Ext.form.ComboBox', {
+        fieldLabel: 'Project',
+        store: projectStore,
+        queryMode: 'local',
+        displayField: 'name',
+        valueField: 'id'
+    });
+
+    var reporters = Ext.create('Ext.form.ComboBox', {
+        fieldLabel: 'Reporter',
+        store: reporterStore,
+        queryMode: 'local',
+        displayField: 'name',
+        valueField: 'id'
+    });
+
+    var ticketPrio = Ext.create('Ext.form.ComboBox', {
+        fieldLabel: 'Priority',
+        valueField: 'value',
+        store: priorityStore,
+        displayField: 'name',
+        queryMode: 'local'
+    });
+
+    var ticketType = Ext.create('Ext.form.ComboBox', {
+        fieldLabel: 'Type',
+        valueField: 'value',
+        store: typeStore,
+        displayField: 'name',
+        queryMode: 'local'
+    });
+
+    ticketPrio.setValue(ticket.priority);
+    ticketType.setValue(ticket.type);
+
+    Ext.Ajax.request({
+        url: '/api/project/getAll',
+        method: 'GET',
+        success: function (form, action) {
+            allProjects = JSON.parse(form.responseText);
+            for(var i=0; i<allProjects.length; i++){
+                projectStore.add({id: allProjects[i].id, name: allProjects[i].name});
+            }
+            projects.setValue(ticket.projectId);
+        },
+        failure: function (form, action) {
+            alert(form.responseText);
+        }
+    });
+
+    Ext.Ajax.request({
+        url: '/api/user/getAllUser',
+        method: 'GET',
+        success: function (form, action) {
+            allUser = JSON.parse(form.responseText);
+            for(var i=0; i<allUser.length; i++){
+                reporterStore.add({id: allUser[i].id, name: allUser[i].name});
+            }
+            reporters.setValue(ticket.reporterId);
+        },
+        failure: function (form, action) {
+            alert(form.responseText);
+        }
+    });
+
+    var updateButton = Ext.create('Ext.button.Button', {
+        text: 'Update',
+        handler: function(){
+            Ext.Ajax.request({
+                url: '/api/ticket/update',
+                method: 'POST',
+                jsonData: getTicket(),
+                success: function (form, action) {
+                    ticketdetailswindow.close();
+                    updateTicketTable('');
+                },
+                failure: function (form, action) {
+                    alert(form.responseText);
+                }
+            });
+        }
+    });
+
+    var getTicket = function(){
+        return {
+            id: ticket.id,
+            name: name.getValue(),
+            description: desc.getValue(),
+            projectId: projects.getValue(),
+            priority: ticketPrio.getValue(),
+            type: ticketType.getValue(),
+            reporterId: reporters.getValue()
+        }
+    };
+
+    var statusStore = Ext.create('Ext.data.Store', {
+        fields: ['id', 'name']
+    });
+
+    var statuses = Ext.create('Ext.form.ComboBox', {
+        fieldLabel: 'Status',
+        store: statusStore,
+        queryMode: 'local',
+        displayField: 'name',
+        valueField: 'id'
+    });
+
+    Ext.Ajax.request({
+        url: '/api/ticket/validStatuses/' + ticket.id,
+        method: 'GET',
+        success: function (form, action) {
+            allStatuses = JSON.parse(form.responseText);
+            for(var i=0; i<allStatuses.length; i++){
+                statusStore.add({id: allStatuses[i].id, name: allStatuses[i].name});
+            }
+
+            statuses.setValue(ticket.statusId);
+        },
+        failure: function (form, action) {
+            alert(form.responseText);
+        }
+    });
+
+    var ticketdetailswindow = Ext.create('Ext.Window', {
+        width: 1000,
+        height: 500,
+        padding: 15,
+        modal: true,
+        layout: {
+            type: 'vbox',
+            padding: 5
+        },
+        items: [
+            name,
+            desc,
+            projects,
+            reporters,
+            statuses,
+            ticketPrio,
+            ticketType
+        ],
+        buttons: [
+            updateButton
+        ]
+    }).show();
+};
+
+
+let newticket = function () {
+
+    var projectStore = Ext.create('Ext.data.Store', {
+        fields: ['id', 'name']
+    });
+
+    var priorityStore = Ext.create('Ext.data.Store', {
+        fields: ['priority'],
+        data: [
+            {"value": 0, "name": "S1"},
+            {"value": 1, "name": "S2"},
+            {"value": 2, "name": "S3"}
+        ]
+    });
+
+    var typeStore = Ext.create('Ext.data.Store', {
+        fields: ['type'],
+        data: [
+            {"value": 0, "name": "Feature"},
+            {"value": 1, "name": "Bug"}
+        ]
+    });
+
+    var projects = Ext.create('Ext.form.ComboBox', {
+        fieldLabel: 'Project',
+        store: projectStore,
+        queryMode: 'local',
+        displayField: 'name',
+        valueField: 'id'
+    });
+
+    var ticketPrio = Ext.create('Ext.form.ComboBox', {
+        fieldLabel: 'Priority',
+        valueField: 'value',
+        store: priorityStore,
+        displayField: 'name',
+        queryMode: 'local'
+    });
+
+    var ticketType = Ext.create('Ext.form.ComboBox', {
+        fieldLabel: 'Type',
+        valueField: 'value',
+        store: typeStore,
+        displayField: 'name',
+        queryMode: 'local'
+    });
+
+    var name = Ext.create('Ext.form.TextField', {
+        fieldLabel: 'Name',
+        width: 400,
+        bodyPadding: 10
+    });
+
+    var desc = Ext.create('Ext.form.TextArea', {
+        fieldLabel: 'Description',
+        width: 400,
+        bodyPadding: 10
+    });
+
+    ticketPrio.setValue(0);
+    ticketType.setValue(0);
+
+    var createButton = Ext.create('Ext.Button', {
+        text: "Create",
+        style: {
+            border: 1
+        },
+        handler: function () {
+            Ext.Ajax.request({
+                url: "/api/ticket/create",
+                method: "POST",
+                jsonData: getTicket(),
+                success: function (form, action) {
+                    newticketwindow.close();
+                    updateTicketTable('');
+                },
+                failure: function (form, action) {
+                    alert(form.responseText);
+                }
+            })
+        }
+    });
+
+    var getTicket = function () {
+        return {
+            name: name.value,
+            description: desc.value,
+            priority: ticketPrio.getValue(),
+            projectId: projects.getValue(),
+            type: ticketType.getValue()
+        }
+    };
+
+    var reporterStore = Ext.create('Ext.data.Store', {
+        fields: ['id', 'name']
+    });
+
+    var reporters = Ext.create('Ext.form.ComboBox', {
+        fieldLabel: 'Reporter',
+        store: reporterStore,
+        queryMode: 'local',
+        displayField: 'name',
+        valueField: 'id'
+    });
+
+    Ext.Ajax.request({
+        url: '/api/user/getAllUser',
+        method: 'GET',
+        success: function (form, action) {
+            allUser = JSON.parse(form.responseText);
+            for (var i = 0; i < allUser.length; i++) {
+                reporterStore.add({id: allUser[i].id, name: allUser[i].name});
+            }
+            reporters.setValue(allUser[0]);
+        },
+        failure: function (form, action) {
+            alert(form.responseText);
+        }
+    });
+
+    var newticketwindow = Ext.create('Ext.Window', {
+        width: 1000,
+        height: 500,
+        modal: true,
+        title: "New ticket",
+        layout: {
+            type: 'vbox',
+            padding: 5
+        },
+        items: [
+            name,
+            desc,
+            projects,
+            reporters,
+            ticketPrio,
+            ticketType
+        ],
+        buttons: [
+            createButton
+        ]
+    }).show();
+
+    Ext.Ajax.request({
+        url: '/api/project/getAll',
+        method: 'GET',
+        success: function (form, action) {
+            allProjects = JSON.parse(form.responseText);
+            for (var i = 0; i < allProjects.length; i++) {
+                projectStore.add({id: allProjects[i].id, name: allProjects[i].name});
+            }
+
+            projects.setValue(allProjects[0].id);
+        },
+        failure: function (form, action) {
+            alert(form.responseText);
+        }
+    });
+};
+
 let tickets = {};
 
 let ticketStore = Ext.create('Ext.data.Store', {
@@ -29,7 +387,7 @@ let searchTicketButton = Ext.create('Ext.button.Button', {
     text: 'Search',
     margin: "0 15 0 0",
     handler: function(){
-        projectStore.removeAll();
+        ticketStore.removeAll();
         updateTicketTable(searchTicketField.value);
     }
 });
@@ -37,7 +395,7 @@ let searchTicketButton = Ext.create('Ext.button.Button', {
 let searchTicketResetButton = Ext.create('Ext.button.Button', {
     text: 'Reset',
     handler: function(){
-        projectStore.removeAll();
+        ticketStore.removeAll();
         searchTicketField.setValue('');
         updateTicketTable(searchTicketField.value);
     }
@@ -122,7 +480,7 @@ Ext.define('App.view.TicketPanel', {
         listeners : {
             itemdblclick : function(view, cell, cellIndex, record, row, rowIndex, e) {
                 localStorage.setItem("ticketId", cell.data.id);
-                window.location.assign("/ticket");
+                ticketdetails();
             }
         }
     }
@@ -133,9 +491,7 @@ let ticketPanel = Ext.create('App.view.TicketPanel', {
 
 let newTicketButton = Ext.create('Ext.button.Button', {
     text: 'New ticket',
-    handler: function(){
-        window.location.assign("/ticket/new");
-    }
+    handler: newticket
 });
 
 let updateTicketTable = function(searchText){
