@@ -13,13 +13,6 @@ let userdetails = function () {
         }
     });
 
-    var getDate = function(date){
-        if(date == null || date < 3){
-            return '01 01 0000';
-        }
-        return date[0] + ' ' + date[1] + ' ' + date[2];
-    };
-
     var typeStore = Ext.create('Ext.data.Store', {
         fields: ['type'],
         data : [
@@ -60,14 +53,6 @@ let userdetails = function () {
         width: 400,
         bodyPadding: 10,
         value: user.password
-    });
-
-
-    var deleteDate = Ext.create('Ext.form.Date', {
-        fieldLabel: 'Deleted date',
-        width: 400,
-        format: 'Y m d',
-        value: getDate(user.deletedTs)
     });
 
     var updateButton = Ext.create('Ext.Button', {
