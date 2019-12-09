@@ -331,7 +331,7 @@ let searchField = Ext.create('Ext.form.TextField', {
     }
 });
 
-let searchButton = Ext.create('Ext.button.Button', {
+let searchProjectButton = Ext.create('Ext.button.Button', {
     text: 'Search',
     margin: "0 15 0 0",
     handler: function(){
@@ -340,7 +340,7 @@ let searchButton = Ext.create('Ext.button.Button', {
     }
 });
 
-let searchResetButton = Ext.create('Ext.button.Button', {
+let searchProjectResetButton = Ext.create('Ext.button.Button', {
     text: 'Reset',
     handler: function(){
         projectStore.removeAll();
@@ -349,7 +349,7 @@ let searchResetButton = Ext.create('Ext.button.Button', {
     }
 });
 
-let searchPanel = Ext.create('Ext.panel.Panel', {
+let searchProjectPanel = Ext.create('Ext.panel.Panel', {
     layout: {
         type: 'hbox',       // Arrange child items vertically
         align: 'stretch',    // Each takes up full width
@@ -357,8 +357,8 @@ let searchPanel = Ext.create('Ext.panel.Panel', {
     },
     items: [
         searchField,
-        searchButton,
-        searchResetButton
+        searchProjectButton,
+        searchProjectResetButton
     ]
 });
 
