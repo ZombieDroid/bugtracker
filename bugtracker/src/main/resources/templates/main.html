@@ -15,6 +15,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/classic/theme-neptune/theme-neptune.js"></script>
 
     <script type="text/javascript" src="js/projects.js"></script>
+    <script type="text/javascript" src="js/users.js"></script>
 
     <script type = "text/javascript">
 
@@ -28,7 +29,6 @@
                     .concat([{
                     title: 'Projects',
                     glyph: "M".charCodeAt(0),
-                    html: '<div id="projectlistdiv" /><div id="newprojectdiv" />',
                     items: [
                         searchProjectPanel,
                         projectPanel,
@@ -47,8 +47,14 @@
                 }]).concat(roles.indexOf("ROLE_ADMIN") >= 0 ? [{
                     title: 'Users',
                     glyph: 85,
-                    html: "alma",
-                    load: function(){}
+                    items: [
+                        searchUserPanel,
+                        userPanel,
+                        newUserButton
+                    ],
+                    load: function(){
+                        updateUserTable("");
+                    }
 
                 }]:[]).concat({
                     title: 'Logout',

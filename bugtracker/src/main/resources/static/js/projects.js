@@ -318,14 +318,14 @@ let projectStore = Ext.create('Ext.data.Store', {
     }
 });
 
-let searchField = Ext.create('Ext.form.TextField', {
+let searchProjectField = Ext.create('Ext.form.TextField', {
     fieldLabel: 'Search',
     margin: "0 15 0 0",
     listeners: {
         specialkey: function(f,e){
             if(e.getKey() == e.ENTER){
                 projectStore.removeAll();
-                updateProjectTable(searchField.value);
+                updateProjectTable(searchProjectField.value);
             }
         }
     }
@@ -336,7 +336,7 @@ let searchProjectButton = Ext.create('Ext.button.Button', {
     margin: "0 15 0 0",
     handler: function(){
         projectStore.removeAll();
-        updateProjectTable(searchField.value);
+        updateProjectTable(searchProjectField.value);
     }
 });
 
@@ -344,8 +344,8 @@ let searchProjectResetButton = Ext.create('Ext.button.Button', {
     text: 'Reset',
     handler: function(){
         projectStore.removeAll();
-        searchField.setValue('');
-        updateProjectTable(searchField.value);
+        searchProjectField.setValue('');
+        updateProjectTable(searchProjectField.value);
     }
 });
 
@@ -356,7 +356,7 @@ let searchProjectPanel = Ext.create('Ext.panel.Panel', {
         padding: 5
     },
     items: [
-        searchField,
+        searchProjectField,
         searchProjectButton,
         searchProjectResetButton
     ]
