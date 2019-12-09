@@ -319,7 +319,8 @@ let projectStore = Ext.create('Ext.data.Store', {
 });
 
 let searchField = Ext.create('Ext.form.TextField', {
-    fieldLabel: 'Search'
+    fieldLabel: 'Search',
+    margin: "0 15 0 0"
 });
 
 let searchButton = Ext.create('Ext.button.Button', {
@@ -330,10 +331,23 @@ let searchButton = Ext.create('Ext.button.Button', {
     }
 });
 
+let searchPanel = Ext.create('Ext.panel.Panel', {
+    layout: {
+        type: 'hbox',       // Arrange child items vertically
+        align: 'stretch',    // Each takes up full width
+        padding: 5
+    },
+    items: [
+        searchField,
+        searchButton
+    ]
+});
+
 Ext.define('BugtrackerApp.view.ProjectPanel', {
     extend: 'Ext.grid.Panel',
     title: 'Projects',
     store: projectStore,
+    margin: '15 0 20 0',
     resizable: true,
 
     columns: {
@@ -394,20 +408,14 @@ Ext.define('BugtrackerApp.view.ProjectPanel', {
                 projectdetails();
             }
         }
-    },
-    removeAll : function(destroy){
-        var c;
-        while(c=this.items.first()){
-            this.remove(c, destroy);
-        }
     }
 });
 
 let projectPanel = Ext.create('BugtrackerApp.view.ProjectPanel', {
 });
 
-let newButton = Ext.create('Ext.button.Button', {
-    text: 'New',
+let newProjectButton = Ext.create('Ext.button.Button', {
+    text: 'New project',
     handler: newproject
 });
 
