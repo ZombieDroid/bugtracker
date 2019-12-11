@@ -10,12 +10,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -37,23 +39,32 @@ public class UserService implements UserDetailsService {
     }
 
     public UserEntity modifyUser(UserEntity user){
-        UserEntity userEntity = userRepository.findByName(user.getName());
-        userEntity.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        UserEntity userEntity = userRepository.findUserEntityById(user.getId());
+        if (!StringUtils.isEmpty(user.getPassword())) {
+            userEntity.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+        }
         userEntity.setEmail(user.getEmail());
         userEntity.setDeletedTs(user.getDeletedTs());
         userEntity.setName(user.getName());
+        userEntity.setType(user.getType());
         return userRepository.save(userEntity);
     }
 
     public List<UserEntity> getAllUser(){
-        return userRepository.findAll();
+        return userRepository.findAll().stream().map(u -> {u.setPassword(null); return u;}).collect(Collectors.toList());
     }
 
     public UserEntity getUserById(Long id){
-        return userRepository.findUserEntityById(id);
+        UserEntity user = userRepository.findUserEntityById(id);
+        user.setPassword(null);
+        return user;
     }
 
-    public UserEntity getUserByName(String name) { return userRepository.findByName(name); }
+    public UserEntity getUserByName(String name) {
+        UserEntity user = userRepository.findByName(name);
+        user.setPassword(null);
+        return user;
+    }
 
     @Override
     @Transactional(readOnly = true)

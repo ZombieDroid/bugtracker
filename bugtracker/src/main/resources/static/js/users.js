@@ -28,8 +28,10 @@ let userdetails = function () {
         store: typeStore,
         queryMode: 'local',
         displayField: 'name',
+        // value: user.type
         valueField: 'value'
     });
+    type.select(type.store.getAt(user.type));
 
 
     var name = Ext.create('Ext.form.TextField', {
@@ -52,7 +54,7 @@ let userdetails = function () {
         inputType: 'password',
         width: 400,
         bodyPadding: 10,
-        value: user.password
+        value: ''
     });
 
     var updateButton = Ext.create('Ext.Button', {
@@ -78,6 +80,7 @@ let userdetails = function () {
 
     var getUser = function(){
         return {
+            id: user.id,
             name: name.value,
             password: password.value,
             email: email.value,
@@ -86,9 +89,10 @@ let userdetails = function () {
     };
 
     var userdetailswindow = Ext.create('Ext.Window', {
-        width: 1000,
-        height: 500,
+        width: 600,
+        height: 300,
         padding: 15,
+        title: "Modify user",
         modal: true,
         layout: {
             type: 'vbox',
@@ -261,6 +265,31 @@ let userPanel = Ext.create('App.view.UserPanel', {
 let newUserButton = Ext.create('Ext.button.Button', {
     text: 'New user',
     handler: newuser
+});
+
+let deleteUserButton = Ext.create('Ext.button.Button', {
+    text: 'Remove user',
+    handler: function() {
+        if (userPanel.getSelectionModel().hasSelection()) {
+            var user = userPanel.getSelectionModel().getSelection()[0];
+            Ext.Ajax.request({
+                url: "/api/user/delete",
+                method: "POST",
+                jsonData: user,
+                success: function (form, action) {
+                    alert("deleted");
+                    updateUserTable('');
+                },
+                failure: function (form, action) {
+                    alert(form.responseText);
+                }
+            });
+            // alert(user.get("id"));
+        }
+        else {
+            alert("Please select a user from the list!");
+        }
+    }
 });
 
 let searchUserField = Ext.create('Ext.form.TextField', {
