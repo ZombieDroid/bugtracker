@@ -5,7 +5,7 @@ import bugtracker.ticket.TicketEntity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "COMMENT")
+@Table(name = "comments")
 public class CommentEntity {
 
     @Id

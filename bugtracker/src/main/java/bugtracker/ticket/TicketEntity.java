@@ -24,9 +24,6 @@ public class TicketEntity {
     private LocalDateTime spentTime;
     private Long type;
 
-    @OneToMany(mappedBy = "comment")
-    private Set<CommentEntity> comments;
-
     public long getId() {
         return id;
     }
