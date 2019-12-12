@@ -1,10 +1,10 @@
 package bugtracker.ticket;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import bugtracker.Comment.CommentEntity;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 
 @Entity
@@ -23,6 +23,9 @@ public class TicketEntity {
     private Long projectId;
     private LocalDateTime spentTime;
     private Long type;
+
+    @OneToMany(mappedBy = "comment")
+    private Set<CommentEntity> comments;
 
     public long getId() {
         return id;
