@@ -46,3 +46,4 @@ $RECYCLE.BIN/
 *.iml
 target
 ../.idea
+*/**/.DS_Store
