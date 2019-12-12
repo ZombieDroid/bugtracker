@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <title>Hello World!</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=10, user-scalable=yes">
+
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+    <link rel="stylesheet" type="text/css" href="/css/pictos.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/classic/theme-neptune/resources/theme-neptune-all.css">
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/ext-all-debug.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/extjs/6.2.0/classic/theme-neptune/theme-neptune.js"></script>
+
+    <script type="text/javascript" src="js/projects.js"></script>
+    <script type="text/javascript" src="js/users.js"></script>
+    <script type="text/javascript" src="js/tickets.js"></script>
+
+    <script type = "text/javascript">
+
+        var roles = [];
+
+        Ext.define('BugtrackerApp.Main', {
+            extend: 'Ext.tab.Panel',
+
+            constructor : function(){
+                this.items = []
+                    .concat([{
+                    title: 'Projects',
+                    glyph: "M".charCodeAt(0),
+                    items: [
+                        searchProjectPanel,
+                        projectPanel,
+                        newProjectButton
+                    ],
+                    load: function(){
+                        updateProjectTable("");
+                    }
+
+                }]).concat([{
+                    title: 'Tickets',
+                    glyph: 61,
+                    items: [
+                        searchTicketPanel,
+                        ticketPanel,
+                        newTicketButton
+                    ],
+                    load: function(){
+                        updateTicketTable("");
+                    }
+
+                }]).concat(roles.indexOf("ROLE_ADMIN") >= 0 ? [{
+                    title: 'Users',
+                    glyph: 85,
+                    items: [
+                        searchUserPanel,
+                        userPanel,
+                        newUserButton
+                    ],
+                    load: function(){
+                        updateUserTable("");
+                    }
+
+                }]:[]).concat({
+                    title: 'Logout',
+                    glyph: 115,
+                    html: 'Goodbye!',
+                    load: function(){
+                        window.location.assign("/logout");
+                    }
+                });
+
+                this.callParent(arguments);
+            },
+
+            xtype: 'app-main',
+
+            ui: 'navigation',
+            tabBarHeaderPosition: 1,
+            titleRotation: 0,
+            tabRotation: 0,
+
+            header: {
+                layout: {
+                    align: 'stretchmax'
+                },
+                title: {
+                    text: 'BugTracker',
+                    flex: 0
+                },
+                iconCls: 'bugicon'
+            },
+
+            tabBar: {
+                flex: 1,
+                layout: {
+                    align: 'stretch',
+                    overflowHandler: 'none'
+                }
+            },
+
+            responsiveConfig: {
+                tall: {
+                    headerPosition: 'top'
+                },
+                wide: {
+                    headerPosition: 'left'
+                }
+            },
+
+            defaults: {
+                bodyPadding: 20,
+                tabConfig: {
+                    plugins: 'responsive',
+                    responsiveConfig: {
+                        wide: {
+                            iconAlign: 'left',
+                            textAlign: 'left'
+                        },
+                        tall: {
+                            iconAlign: 'top',
+                            textAlign: 'center',
+                            width: 120
+                        }
+                    }
+                }
+            },
+
+            listeners: {
+                'tabchange': function(tabPanel, tab) {
+                    tab.load();
+                },
+                'render' : function() {
+                    this.getActiveTab().load();
+                }
+            }
+        });
+
+        Ext.define('BugtrackerApp.Application', {
+            extend: 'Ext.app.Application',
+
+            name: 'BugtrackerApp',
+
+            glyphFontFamily: 'Pictos'
+        });
+
+        Ext.onReady(function(){
+
+            Ext.Ajax.request({
+                url: '/api/user/current/roles',
+                method: 'GET',
+                success: function (form, action) {
+                    roles = JSON.parse(form.responseText);
+
+                    Ext.application({
+                        name: 'BugtrackerApp',
+
+                        extend: 'BugtrackerApp.Application',
+
+                        autoCreateViewport: 'BugtrackerApp.Main'
+
+                    });
+
+                },
+                failure: function (form, action) {
+                    window.location.assign("/login");
+                }
+            });
+
+        });
+    </script>
+</head>
+<body>
+
+
+</body>
+</html>

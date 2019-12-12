@@ -14,6 +14,8 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/project")
 public class ProjectController {
+    public static final String UPDATE = "update";
+    public static final String CREATE = "create";
 
     // todo: move related logic to ProjectService!
 
@@ -25,7 +27,7 @@ public class ProjectController {
     @ResponseBody()
     public ResponseEntity addNewProject(@RequestBody ProjectEntity project) {
         try {
-            projectService.createProject(project);
+            projectService.saveProjectWithHistory(project, CREATE);
         } catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -35,7 +37,7 @@ public class ProjectController {
     @PostMapping("/update")
     public ResponseEntity<String> updateTicket(@RequestBody ProjectEntity project) {
         try{
-            projectService.saveProject(project);
+            projectService.saveProjectWithHistory(project, UPDATE);
         } catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

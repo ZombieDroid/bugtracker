@@ -74,4 +74,5 @@ public class UserService implements UserDetailsService {
     public List<UserEntity> getUsersByType(Integer type){
         return userRepository.findByType(type);
     }
+    public List<UserEntity> searchByName(String text) { return userRepository.findByNameContaining(text); }
 }

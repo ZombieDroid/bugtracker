@@ -10,6 +10,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
 
+@RestController
+@RequestMapping("/api/history")
 public class HistoryController {
 
 
