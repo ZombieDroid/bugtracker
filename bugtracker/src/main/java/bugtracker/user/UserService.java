@@ -38,6 +38,11 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    public UserEntity undeleteUser(UserEntity user){
+        user.setDeletedTs(null);
+        return userRepository.save(user);
+    }
+
     public UserEntity modifyUser(UserEntity user){
         UserEntity userEntity = userRepository.findUserEntityById(user.getId());
         if (!StringUtils.isEmpty(user.getPassword())) {
