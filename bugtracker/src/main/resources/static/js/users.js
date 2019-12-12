@@ -44,7 +44,8 @@ let userdetails = function () {
         fieldLabel: 'Email',
         width: 400,
         bodyPadding: 10,
-        value: user.email
+        value: user.email,
+        vtype: 'email'
     });
 
     var password = Ext.create('Ext.form.TextField', {
