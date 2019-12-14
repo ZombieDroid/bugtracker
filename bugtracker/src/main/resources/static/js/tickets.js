@@ -32,6 +32,10 @@ let ticketdetails = function() {
         fields: ['id', 'name']
     });
 
+    var ownerStore = Ext.create('Ext.data.Store', {
+        fields: ['id', 'name']
+    });
+
     var priorityStore = Ext.create('Ext.data.Store', {
         fields: ['priority'],
         data : [
@@ -60,6 +64,14 @@ let ticketdetails = function() {
     var reporters = Ext.create('Ext.form.ComboBox', {
         fieldLabel: 'Reporter',
         store: reporterStore,
+        queryMode: 'local',
+        displayField: 'name',
+        valueField: 'id'
+    });
+
+    var owners = Ext.create('Ext.form.ComboBox', {
+        fieldLabel: 'Owner',
+        store: ownerStore,
         queryMode: 'local',
         displayField: 'name',
         valueField: 'id'
@@ -114,6 +126,21 @@ let ticketdetails = function() {
         }
     });
 
+    Ext.Ajax.request({
+        url: '/api/user/getAllOwner',
+        method: 'GET',
+        success: function (form, action) {
+            allUser = JSON.parse(form.responseText);
+            for(var i=0; i<allUser.length; i++){
+                ownerStore.add({id: allUser[i].id, name: allUser[i].name});
+            }
+            owners.setValue(ticket.ownerId);
+        },
+        failure: function (form, action) {
+            alert(form.responseText);
+        }
+    });
+
     var updateButton = Ext.create('Ext.button.Button', {
         text: 'Update',
         handler: function(){
@@ -140,7 +167,8 @@ let ticketdetails = function() {
             projectId: projects.getValue(),
             priority: ticketPrio.getValue(),
             type: ticketType.getValue(),
-            reporterId: reporters.getValue()
+            reporterId: reporters.getValue(),
+            ownerId: owners.getValue()
         }
     };
 
@@ -186,6 +214,7 @@ let ticketdetails = function() {
             desc,
             projects,
             reporters,
+            owners,
             statuses,
             ticketPrio,
             ticketType
@@ -286,7 +315,9 @@ let newticket = function () {
             description: desc.value,
             priority: ticketPrio.getValue(),
             projectId: projects.getValue(),
-            type: ticketType.getValue()
+            type: ticketType.getValue(),
+            ownerId: owners.getValue(),
+            reporterId: reporters.getValue()
         }
     };
 
@@ -297,6 +328,18 @@ let newticket = function () {
     var reporters = Ext.create('Ext.form.ComboBox', {
         fieldLabel: 'Reporter',
         store: reporterStore,
+        queryMode: 'local',
+        displayField: 'name',
+        valueField: 'id'
+    });
+
+    var ownerStore = Ext.create('Ext.data.Store', {
+        fields: ['id', 'name']
+    });
+
+    var owners = Ext.create('Ext.form.ComboBox', {
+        fieldLabel: 'Owner',
+        store: ownerStore,
         queryMode: 'local',
         displayField: 'name',
         valueField: 'id'
@@ -317,6 +360,22 @@ let newticket = function () {
         }
     });
 
+
+    Ext.Ajax.request({
+        url: '/api/user/getAllOwner',
+        method: 'GET',
+        success: function (form, action) {
+            allUser = JSON.parse(form.responseText);
+            for (var i = 0; i < allUser.length; i++) {
+                ownerStore.add({id: allUser[i].id, name: allUser[i].name});
+            }
+            owners.setValue(allUser[0]);
+        },
+        failure: function (form, action) {
+            alert(form.responseText);
+        }
+    });
+
     var newticketwindow = Ext.create('Ext.Window', {
         width: 1000,
         height: 500,
@@ -331,6 +390,7 @@ let newticket = function () {
             desc,
             projects,
             reporters,
+            owners,
             ticketPrio,
             ticketType
         ],
@@ -360,7 +420,7 @@ let tickets = {};
 
 let ticketStore = Ext.create('Ext.data.Store', {
     fields : ['id', 'name', 'priority', 'description',
-        'reporter', 'status', 'project', 'spentTime', 'type'],
+        'reporter', 'owner', 'status', 'project', 'spentTime', 'type'],
     proxy : {
         type : 'memory',
         reader : {
@@ -451,6 +511,13 @@ Ext.define('App.view.TicketPanel', {
         sortable: false,
         hideable: false,
         dataIndex: 'reporter'
+    },
+    {
+        text: 'Owner',
+        flex: 15 / 100,
+        sortable: false,
+        hideable: false,
+        dataIndex: 'owner'
     },{
         text: 'Status',
         flex: 10 / 100,
@@ -511,6 +578,7 @@ let updateTicketTable = function(searchText){
 let fillTicketStore = function (){
     for(var i=0; i<tickets.length; i++){
         var reporter = "";
+        var owner = "";
         var project = "";
         var status = "";
         var responseType = "";
@@ -522,6 +590,20 @@ let fillTicketStore = function (){
                 async: false,
                 success: function (form, action){
                     reporter = form.responseText;
+                },
+                failure: function(form, action){
+                    alert(form.responseText);
+                }
+            });
+        }
+
+        if(tickets[i].ownerId != null){
+            Ext.Ajax.request({
+                url: "/api/ticket/getOwner/" + tickets[i].ownerId,
+                method: "GET",
+                async: false,
+                success: function (form, action){
+                    owner = form.responseText;
                 },
                 failure: function(form, action){
                     alert(form.responseText);
@@ -573,7 +655,7 @@ let fillTicketStore = function (){
         }
 
         ticketStore.add({id: tickets[i].id, name: tickets[i].name, priority: tickets[i].priority,
-            description: tickets[i].description, reporter: reporter, status: status,
+            description: tickets[i].description, reporter: reporter,  owner: owner, status: status,
             project: project, spentTime: tickets[i].spentTime, type: responseType });
     }
 };

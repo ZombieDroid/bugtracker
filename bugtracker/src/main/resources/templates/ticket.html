@@ -45,6 +45,11 @@
                     fields: ['id', 'name']
                 });
 
+                var ownerStore = Ext.create('Ext.data.Store', {
+                    fields: ['id', 'name']
+                });
+
+
                 var priorityStore = Ext.create('Ext.data.Store', {
                     fields: ['priority'],
                     data : [
@@ -73,6 +78,14 @@
                 var reporters = Ext.create('Ext.form.ComboBox', {
                     fieldLabel: 'Reporter',
                     store: reporterStore,
+                    queryMode: 'local',
+                    displayField: 'name',
+                    valueField: 'id'
+                });
+
+                var owners = Ext.create('Ext.form.ComboBox', {
+                    fieldLabel: 'Owner',
+                    store: ownerStore,
                     queryMode: 'local',
                     displayField: 'name',
                     valueField: 'id'
@@ -123,7 +136,22 @@
                         reporters.setValue(ticket.reporterId);
                     },
                     failure: function (form, action) {
-                        alert(form.responseText);
+                        alert('--' + form.responseText);
+                    }
+                });
+
+                Ext.Ajax.request({
+                    url: '/api/user/getAllUser',
+                    method: 'GET',
+                    success: function (form, action) {
+                        allUser = JSON.parse(form.responseText);
+                        for(var i=0; i<allUser.length; i++){
+                            ownerStore.add({id: allUser[i].id, name: allUser[i].name});
+                        }
+                        owners.setValue(ticket.ownerId);
+                    },
+                    failure: function (form, action) {
+                        alert('...' + form.responseText);
                     }
                 });
 
@@ -152,7 +180,8 @@
                         projectId: projects.getValue(),
                         priority: ticketPrio.getValue(),
                         type: ticketType.getValue(),
-                        reporterId: reporters.getValue()
+                        reporterId: reporters.getValue(),
+                        ownerId: owners.getValue()
                     }
                 };
 
@@ -197,6 +226,7 @@
                         desc,
                         projects,
                         reporters,
+                        owners,
                         statuses,
                         ticketPrio,
                         ticketType

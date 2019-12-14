@@ -95,7 +95,9 @@ public class TicketController {
         TicketEntity currTicket = ticketService.getTicketById(ticket.getId());
         if(!currTicket.getStatusId().equals(ticket.getStatusId())){
             boolean isValidNextStatus = false;
-            for(NextStatus ns : nextStatusTable.get(currTicket.getStatusId())){
+            for(NextStatus ns : nextStatusTable.get(ticket.getStatusId())){
+                System.out.println("ns: " + ns);
+                System.out.println("ticket status: " + ticket.getStatusId());
                 if(ticket.getStatusId().equals(ns.status)){
                     isValidNextStatus = true;
                     break;
@@ -122,6 +124,16 @@ public class TicketController {
 
     @GetMapping("/getReporter/{id}")
     public ResponseEntity<String> getReporterById(@PathVariable Long id){
+        String name = "";
+        UserEntity user = userService.getUserById(id);
+        if(user != null){
+            name = user.getName();
+        }
+        return new ResponseEntity<>(name, HttpStatus.OK);
+    }
+
+    @GetMapping("/getOwner/{id}")
+    public ResponseEntity<String> getOwnerById(@PathVariable Long id){
         String name = "";
         UserEntity user = userService.getUserById(id);
         if(user != null){
@@ -179,11 +191,12 @@ public class TicketController {
             TicketEntity ticket = ticketService.getTicketById(ticketId);
             statuses.add(statusService.getStatusById(ticket.getStatusId()));
             if(isCurrentUserAssignedToTicket(ticket)){
+
                 StatusEntity ticketStatus = statusService.getStatusById(ticket.getStatusId());
                 for(NextStatus ns : nextStatusTable.get(ticketStatus.getId())){
-                    if(isCurrentUserValid(ns.userType) &&
-                            (ticket.getType().equals(ns.ticketType) || ns.ticketType.equals(2L))){
+                    if(isCurrentUserValid(ns.userType) && (ticket.getType().equals(ns.ticketType) || ns.ticketType.equals(2L))){
                         statuses.add(statusService.getStatusById(ns.status));
+
                     }
                 }
             }
@@ -194,12 +207,11 @@ public class TicketController {
     }
 
     private boolean isCurrentUserValid(Long validId){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
 
-        String username = auth.getName();
 
-        UserEntity user = userService.getUserByName(username);
-
+        UserEntity user = userService.getUserByName(currentPrincipalName);
         if(user != null){
             return user.getType() == validId;
         }
@@ -211,10 +223,9 @@ public class TicketController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         String username = auth.getName();
-
         UserEntity user = userService.getUserByName(username);
 
-        if(user != null){
+        if(user != null && null != ticket.getOwnerId()){
             return user.getId() == ticket.getReporterId() ||
                     user.getId() == ticket.getOwnerId();
         }

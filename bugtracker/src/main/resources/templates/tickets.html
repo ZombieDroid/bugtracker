@@ -16,7 +16,7 @@
 
                 var ticketStore = Ext.create('Ext.data.Store', {
                     fields : ['id', 'name', 'priority', 'description',
-                        'reporter', 'status', 'project', 'spentTime', 'type'],
+                        'reporter', 'owner', 'status', 'project', 'spentTime', 'type'],
                     proxy : {
                         type : 'memory',
                         reader : {
@@ -75,7 +75,15 @@
                         sortable: false,
                         hideable: false,
                         dataIndex: 'reporter'
-                    },{
+                    },
+                    {
+                        text: 'Owner',
+                        width: 100,
+                        sortable: false,
+                        hideable: false,
+                        dataIndex: 'owner'
+                    }
+                    ,{
                         text: 'Status',
                         width: 100,
                         sortable: false,
@@ -156,6 +164,7 @@
                 var fillTicketStore = function (){
                     for(var i=0; i<tickets.length; i++){
                         var reporter = "";
+                        var owner = "";
                         var project = "";
                         var status = "";
                         var responseType = "";
@@ -167,6 +176,20 @@
                                 async: false,
                                 success: function (form, action){
                                     reporter = form.responseText;
+                                },
+                                failure: function(form, action){
+                                    alert(form.responseText);
+                                }
+                            });
+                        }
+
+                        if(tickets[i].ownerId != null){
+                            Ext.Ajax.request({
+                                url: "/api/ticket/getOwner/" + tickets[i].ownerid,
+                                method: "GET",
+                                async: false,
+                                success: function (form, action){
+                                    owner = form.responseText;
                                 },
                                 failure: function(form, action){
                                     alert(form.responseText);
@@ -218,7 +241,7 @@
                         }
 
                         ticketStore.add({id: tickets[i].id, name: tickets[i].name, priority: tickets[i].priority,
-                            description: tickets[i].description, reporter: reporter, status: status,
+                            description: tickets[i].description, reporter: reporter,  owner: owner, status: status,
                             project: project, spentTime: tickets[i].spentTime, type: responseType });
                     }
                 };
