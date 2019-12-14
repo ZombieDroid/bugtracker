@@ -30,6 +30,7 @@ let userdetails = function () {
         displayField: 'name',
         valueField: 'value'
     });
+    type.select(type.store.getAt(user.type));
 
 
     var name = Ext.create('Ext.form.TextField', {
@@ -43,7 +44,8 @@ let userdetails = function () {
         fieldLabel: 'Email',
         width: 400,
         bodyPadding: 10,
-        value: user.email
+        value: user.email,
+        vtype: 'email'
     });
 
     var password = Ext.create('Ext.form.TextField', {
@@ -52,8 +54,10 @@ let userdetails = function () {
         inputType: 'password',
         width: 400,
         bodyPadding: 10,
-        value: user.password
+        value: ''
     });
+
+
 
     var updateButton = Ext.create('Ext.Button', {
         text: "Update",
@@ -76,8 +80,45 @@ let userdetails = function () {
         }
     });
 
+    var deleteUserButton = Ext.create('Ext.Button', {
+        text: 'Remove user',
+        handler: function() {
+            Ext.Ajax.request({
+                url: "/api/user/delete",
+                method: "POST",
+                jsonData: getUser(),
+                success: function (form, action) {
+                    userdetailswindow.close();
+                    updateUserTable('');
+                },
+                failure: function (form, action) {
+                    alert(form.responseText);
+                }
+            });
+        }
+    });
+
+    var undeleteUserButton = Ext.create('Ext.Button', {
+        text: 'Restore user',
+        handler: function() {
+            Ext.Ajax.request({
+                url: "/api/user/undelete",
+                method: "POST",
+                jsonData: getUser(),
+                success: function (form, action) {
+                    userdetailswindow.close();
+                    updateUserTable('');
+                },
+                failure: function (form, action) {
+                    alert(form.responseText);
+                }
+            });
+        }
+    });
+
     var getUser = function(){
         return {
+            id: user.id,
             name: name.value,
             password: password.value,
             email: email.value,
@@ -86,9 +127,10 @@ let userdetails = function () {
     };
 
     var userdetailswindow = Ext.create('Ext.Window', {
-        width: 1000,
-        height: 500,
+        width: 600,
+        height: 300,
         padding: 15,
+        title: "Modify user",
         modal: true,
         layout: {
             type: 'vbox',
@@ -100,9 +142,20 @@ let userdetails = function () {
             email,
             type
         ],
-        buttons: [
-            updateButton
-        ]
+        buttons: (function() {
+            if (user.deletedTs) {
+                return [
+                    undeleteUserButton,
+                    updateButton
+                ];
+            }
+            else {
+                return [
+                    deleteUserButton,
+                    updateButton
+                ]
+            }
+        })()
     }).show();
 };
 
@@ -202,7 +255,13 @@ let newuser = function () {
 let users = {};
 
 let userStore = Ext.create('Ext.data.Store', {
-    fields : ['id', 'name', 'email', 'type'],
+    fields : [
+        'id',
+        'name',
+        'email',
+        'type',
+        'deletedTs'
+    ],
     proxy : {
         type : 'memory',
         reader : {
@@ -228,13 +287,13 @@ Ext.define('App.view.UserPanel', {
         dataIndex: 'id'
     },{
         text: 'Name',
-        flex: 35 / 100,
+        flex: 25 / 100,
         sortable: false,
         hideable: false,
         dataIndex: 'name'
     },{
         text: 'Email',
-        flex: 35 / 100,
+        flex: 25 / 100,
         sortable: false,
         hideable: false,
         dataIndex: 'email'
@@ -244,6 +303,21 @@ Ext.define('App.view.UserPanel', {
         sortable: false,
         hideable: false,
         dataIndex: 'type'
+    },{
+        text: "Delete time",
+        flex: 20/100,
+        sortable: false,
+        hideable: false,
+        dataIndex: 'deletedTs',
+        renderer: function (t, meta, record) {
+            var dt = record.getData().deletedTs;
+            if (dt) {
+                return "".concat(dt[0], "/", dt[1], "/", dt[2], " ", dt[3], ":", dt[4], ":", dt[5]);
+            }
+            else {
+                return '';
+            }
+        }
     }],
     viewConfig : {
         listeners : {
@@ -251,6 +325,10 @@ Ext.define('App.view.UserPanel', {
                 localStorage.setItem("userId", cell.data.id);
                 userdetails();
             }
+        },
+        stripeRows: false,
+        getRowClass: function(record) {
+            return record.get('deletedTs') ? 'deleted-user' : '';
         }
     }
 });
@@ -310,7 +388,6 @@ let searchUserPanel = Ext.create('Ext.panel.Panel', {
 
 let updateUserTable = function(searchText){
     Ext.Ajax.request({
-        // url: "/api/user/all/",
         url: "/api/user/searchUsers/" + searchText,
         method: "GET",
         success: function (form, action){
@@ -337,7 +414,12 @@ let fillUserStore = function (){
         }
 
 
-        userStore.add({id: users[i].id, name: users[i].name, email: users[i].email,
-            type: typer});
+        userStore.add({
+            id: users[i].id,
+            name: users[i].name,
+            email: users[i].email,
+            type: typer,
+            deletedTs: users[i].deletedTs
+        });
     }
 };

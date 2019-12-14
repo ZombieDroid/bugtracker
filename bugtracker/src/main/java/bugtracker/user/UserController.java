@@ -46,6 +46,13 @@ public class UserController {
         return this.userService.deleteUser(user);
     }
 
+    @RequestMapping(value = "/undelete", method = RequestMethod.POST,
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody()
+    public UserEntity undeleteUser(@RequestBody UserEntity user) {
+        return this.userService.undeleteUser(user);
+    }
+
 
     @RequestMapping(value = "/modify", method = RequestMethod.POST,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
