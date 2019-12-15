@@ -7,7 +7,7 @@ import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "COMMENT")
+@Table(name = "KOMMENT")
 public class CommentEntity {
     @Id
     @GeneratedValue
