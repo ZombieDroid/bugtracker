@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -75,6 +76,7 @@ public class TicketController {
         }
         try {
             ticket.setStatusId(133L);    // pending
+            ticket.setCreationTime(LocalDate.now());
             ticketService.createTicket(ticket);
         } catch (Exception e){
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

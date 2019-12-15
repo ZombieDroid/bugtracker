@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 
@@ -23,6 +24,7 @@ public class TicketEntity {
     private Long projectId;
     private LocalDateTime spentTime;
     private Long type;
+    private LocalDate creationTime;
 
     public long getId() {
         return id;
@@ -102,6 +104,14 @@ public class TicketEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public LocalDate getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(LocalDate creationTime) {
+        this.creationTime = creationTime;
     }
 
     public enum Priority {
