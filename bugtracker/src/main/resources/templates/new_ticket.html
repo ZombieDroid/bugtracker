@@ -106,9 +106,21 @@
                 fields: ['id', 'name']
             });
 
+            var ownerStore = Ext.create('Ext.data.Store', {
+                fields: ['id', 'name']
+            });
+
             var reporters = Ext.create('Ext.form.ComboBox', {
                 fieldLabel: 'Reporter',
                 store: reporterStore,
+                queryMode: 'local',
+                displayField: 'name',
+                valueField: 'id'
+            });
+
+            var owners = Ext.create('Ext.form.ComboBox', {
+                fieldLabel: 'Owner',
+                store: ownerStore,
                 queryMode: 'local',
                 displayField: 'name',
                 valueField: 'id'
@@ -129,6 +141,21 @@
                 }
             });
 
+            Ext.Ajax.request({
+                url: '/api/user/getAllUser',
+                method: 'GET',
+                success: function (form, action) {
+                    allUser = JSON.parse(form.responseText);
+                    for(var i=0; i<allUser.length; i++){
+                        ownerStore.add({id: allUser[i].id, name: allUser[i].name});
+                    }
+                    owners.setValue(allUser[0]);
+                },
+                failure: function (form, action) {
+                    alert(form.responseText);
+                }
+            });
+
             Ext.create('Ext.panel.Panel', {
                 renderTo: Ext.getBody(),
                 width: 1000,
@@ -142,6 +169,7 @@
                     desc,
                     projects,
                     reporters,
+                    owners,
                     ticketPrio,
                     ticketType
                 ],

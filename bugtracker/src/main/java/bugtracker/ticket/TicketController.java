@@ -131,6 +131,16 @@ public class TicketController {
         return new ResponseEntity<>(name, HttpStatus.OK);
     }
 
+    @GetMapping("/getOwner/{id}")
+    public ResponseEntity<String> getOwnerById(@PathVariable Long id){
+        String name = "";
+        UserEntity user = userService.getUserById(id);
+        if(user != null){
+            name = user.getName();
+        }
+        return new ResponseEntity<>(name, HttpStatus.OK);
+    }
+
     @GetMapping("/getProject/{id}")
     public ResponseEntity<String> getProjectById(@PathVariable Long id){
         String name = "";
@@ -180,6 +190,7 @@ public class TicketController {
             TicketEntity ticket = ticketService.getTicketById(ticketId);
             statuses.add(statusService.getStatusById(ticket.getStatusId()));
             if(isCurrentUserAssignedToTicket(ticket)){
+
                 StatusEntity ticketStatus = statusService.getStatusById(ticket.getStatusId());
                 for(StatusWorkflow.NextStatus ns : StatusWorkflow.getNextPossibleStatuses(ticketStatus.getId())){
                     if(isCurrentUserValid(ns.getUserType()) &&
@@ -195,12 +206,11 @@ public class TicketController {
     }
 
     private boolean isCurrentUserValid(Long validId){
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentPrincipalName = authentication.getName();
 
-        String username = auth.getName();
 
-        UserEntity user = userService.getUserByName(username);
-
+        UserEntity user = userService.getUserByName(currentPrincipalName);
         if(user != null){
             return user.getType() == validId;
         }
@@ -212,7 +222,6 @@ public class TicketController {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         String username = auth.getName();
-
         UserEntity user = userService.getUserByName(username);
 
         if(user != null){

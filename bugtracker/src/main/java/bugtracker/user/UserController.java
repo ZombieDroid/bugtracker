@@ -15,6 +15,7 @@ import javax.inject.Inject;
 import javax.validation.constraints.Null;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -94,6 +95,14 @@ public class UserController {
     @GetMapping("/getAllDeveloper")
     public ResponseEntity<List<UserEntity>> getAllDeveloper(){
         return new ResponseEntity<>(userService.getUsersByType(1), HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllOwner")
+    public ResponseEntity<List<UserEntity>> getAllOwner(){
+        List<UserEntity> users = new ArrayList<>();
+        users.addAll(userService.getUsersByType(1));
+        users.addAll(userService.getUsersByType(3));
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @GetMapping("/getAllUser")
