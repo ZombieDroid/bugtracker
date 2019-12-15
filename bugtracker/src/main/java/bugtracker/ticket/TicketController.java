@@ -4,6 +4,7 @@ import bugtracker.project.ProjectEntity;
 import bugtracker.project.ProjectService;
 import bugtracker.status.StatusEntity;
 import bugtracker.status.StatusService;
+import bugtracker.status.StatusWorkflow;
 import bugtracker.user.UserEntity;
 import bugtracker.user.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -95,10 +96,8 @@ public class TicketController {
         TicketEntity currTicket = ticketService.getTicketById(ticket.getId());
         if(!currTicket.getStatusId().equals(ticket.getStatusId())){
             boolean isValidNextStatus = false;
-            for(NextStatus ns : nextStatusTable.get(ticket.getStatusId())){
-                System.out.println("ns: " + ns);
-                System.out.println("ticket status: " + ticket.getStatusId());
-                if(ticket.getStatusId().equals(ns.status)){
+            for(StatusWorkflow.NextStatus ns : StatusWorkflow.getNextPossibleStatuses(currTicket.getStatusId())){
+                if(ticket.getStatusId().equals(ns.getStatus())){
                     isValidNextStatus = true;
                     break;
                 }
@@ -193,10 +192,10 @@ public class TicketController {
             if(isCurrentUserAssignedToTicket(ticket)){
 
                 StatusEntity ticketStatus = statusService.getStatusById(ticket.getStatusId());
-                for(NextStatus ns : nextStatusTable.get(ticketStatus.getId())){
-                    if(isCurrentUserValid(ns.userType) && (ticket.getType().equals(ns.ticketType) || ns.ticketType.equals(2L))){
-                        statuses.add(statusService.getStatusById(ns.status));
-
+                for(StatusWorkflow.NextStatus ns : StatusWorkflow.getNextPossibleStatuses(ticketStatus.getId())){
+                    if(isCurrentUserValid(ns.getUserType()) &&
+                            (ticket.getType().equals(ns.getTicketType()) || ns.getTicketType().equals(2L))){
+                        statuses.add(statusService.getStatusById(ns.getStatus()));
                     }
                 }
             }
@@ -225,9 +224,9 @@ public class TicketController {
         String username = auth.getName();
         UserEntity user = userService.getUserByName(username);
 
-        if(user != null && null != ticket.getOwnerId()){
-            return user.getId() == ticket.getReporterId() ||
-                    user.getId() == ticket.getOwnerId();
+        if(user != null){
+            return ticket.getReporterId() != null && ticket.getReporterId().equals(user.getId()) ||
+                    ticket.getOwnerId() != null && ticket.getOwnerId().equals(user.getId());
         }
 
         return false;

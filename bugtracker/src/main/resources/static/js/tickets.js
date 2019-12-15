@@ -200,6 +200,11 @@ let ticketdetails = function() {
         }
     });
 
+    var logTimeButton = Ext.create('Ext.button.Button', {
+        text: 'Log Time',
+        handler: logTime
+    });
+
     var ticketdetailswindow = Ext.create('Ext.Window', {
         width: 1000,
         height: 500,
@@ -220,11 +225,70 @@ let ticketdetails = function() {
             ticketType
         ],
         buttons: [
-            updateButton
+            updateButton,
+            logTimeButton
         ]
     }).show();
 };
 
+let logTime = function () {
+
+    var time = Ext.create('Ext.form.field.Number', {
+        fieldLabel: 'Time',
+        width: 400,
+        minValue: 0,
+        value: 0
+    });
+
+    var desc = Ext.create('Ext.form.TextArea', {
+        fieldLabel: 'Description',
+        width: 400,
+        bodyPadding: 10
+    });
+
+    var logTimeButton = Ext.create('Ext.button.Button', {
+        text: 'Log Time',
+        handler: function() {
+            Ext.Ajax.request({
+                url: '/api/timelog/log',
+                method: 'POST',
+                jsonData: getTimeLog(),
+                success: function (form, action) {
+                    logTimeWindow.close();
+                },
+                failure: function (form, action) {
+                    alert(form.responseText);
+                }
+            })
+        }
+    });
+
+    var getTimeLog = function(){
+        return {
+            ticketId: localStorage.getItem("ticketId"),
+            time: time.value,
+            description: desc.value
+        };
+    };
+
+    var logTimeWindow = Ext.create('Ext.Window', {
+        width: 500,
+        height: 300,
+        modal: true,
+        title: "Log time",
+        layout: {
+            type: 'vbox',
+            padding: 5
+        },
+        items: [
+            time,
+            desc
+        ],
+        buttons: [
+            logTimeButton
+        ]
+    }).show();
+};
 
 let newticket = function () {
 
