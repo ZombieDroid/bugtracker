@@ -142,10 +142,11 @@ let projectdetails = function() {
     };
 
     var projectdetailswindow = Ext.create('Ext.Window', {
-        width: 1000,
-        height: 500,
+        width: 560,
+        height: 380,
         padding: 15,
         modal: true,
+        title: "Project details",
         layout: {
             type: 'vbox',
             padding: 5

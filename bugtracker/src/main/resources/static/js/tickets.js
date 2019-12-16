@@ -1,3 +1,16 @@
+let fetchUser = function(userId) {
+    Ext.Ajax.request({
+        url: '/api/user/'+userId,
+        method: 'GET',
+        success: function (form, action) {
+            return JSON.parse(form.responseText)
+        },
+        failure: function (form, action) {
+            alert(form.responseText);
+        }
+    });
+};
+
 let ticketdetails = function() {
     var ticket = {};
 
@@ -34,6 +47,10 @@ let ticketdetails = function() {
 
     var ownerStore = Ext.create('Ext.data.Store', {
         fields: ['id', 'name']
+    });
+
+    var commentStore = Ext.create('Ext.data.Store', {
+        fields: ['commentText', 'commentTime', 'commentUser']
     });
 
     var priorityStore = Ext.create('Ext.data.Store', {
@@ -168,7 +185,8 @@ let ticketdetails = function() {
             priority: ticketPrio.getValue(),
             type: ticketType.getValue(),
             reporterId: reporters.getValue(),
-            ownerId: owners.getValue()
+            ownerId: owners.getValue(),
+            statusId: statuses.getValue()
         }
     };
 
@@ -205,20 +223,17 @@ let ticketdetails = function() {
         handler: logTime
     });
 
-    var showHistoryButton = Ext.create('Ext.button.Button', {
+      var showHistoryButton = Ext.create('Ext.button.Button', {
         text: 'Show history',
         handler: showHistory
 
     });
 
-    var ticketdetailswindow = Ext.create('Ext.Window', {
-        width: 1000,
-        height: 500,
-        padding: 15,
-        modal: true,
+  var ticketdetailspanel = Ext.create('Ext.panel.Panel',{
+        width: 400,
         layout: {
             type: 'vbox',
-            padding: 5
+            // padding: 5
         },
         items: [
             name,
@@ -282,6 +297,145 @@ var showHistory = function () {
         modal: true,
         items: [
             historyPanel
+        ]
+    });
+
+    Ext.Ajax.request({
+        url: '/api/comment/all/'+localStorage.getItem("ticketId"),
+        method: 'GET',
+        async: false,
+        success: function (form, action) {
+            let comments = JSON.parse(form.responseText);
+            for(let i=0; i<comments.length; i++){
+                let d = comments[i].commentTime
+                console.log(d)
+                commentStore.add({
+                    commentText: comments[i].commentText,
+                    commentTime: new Date(Date(d[0], d[1], d[2], d[3], d[4], d[5])),
+                    commentUser: comments[i].userName
+                });
+            }
+        },
+        failure: function (form, action) {
+            alert(form.responseText);
+        }
+    });
+
+    let sendComment = function() {
+        if (commentTextInput.getValue()) {
+            Ext.Ajax.request({
+                url: '/api/user/current/',
+                method: 'GET',
+                success: function (form, action) {
+                    let currentuser = JSON.parse(form.responseText);
+                    let newcomment = {
+                        commentText: commentTextInput.getValue(),
+                        commentTime: new Date(),
+                        commentUser: currentuser.name
+                    };
+                    createComment(currentuser, newcomment);
+                    commentStore.add(newcomment);
+                    commentslist.getScrollable().scrollTo(Infinity, Infinity, true);
+                    commentTextInput.setValue('');
+                },
+                failure: function (form, action) {
+                    alert("Cannot fetch current user")
+                }
+            });
+        }
+    };
+
+    var commentTextInput = Ext.create('Ext.form.TextArea', {
+        margin: 10,
+        docked: 'bottom',
+        maxLength: 250,
+        enforceMaxLength: true,
+        enableKeyEvents:true,
+        listeners: {
+            keypress: function(field, evt, eOpts) {
+                if (evt.getKey() == evt.ENTER) {
+                    evt.preventDefault();
+                    sendComment();
+                }
+            }
+        }
+    });
+
+    var commentslist = Ext.create('Ext.DataView', {
+        flex: 1,
+        store: commentStore,
+        disableSelection: true,
+        cls: 'comments',
+        scrollable: true,
+        emptyText: 'There are no comments',
+        autoScroll: true,
+        height: '100%',
+        margin: 10,
+        itemTpl: [
+            '<div class="header"><span class="created">{commentTime:date("Y-m-d H:i")}</span> - <span class="user">{commentUser}</span></div>',
+            '<div class="content">{commentText}</div>'
+        ]
+    });
+
+    let createComment = function(user, comment) {
+        Ext.Ajax.request({
+            url: '/api/comment/create',
+            method: 'POST',
+            jsonData: {
+                ticketId: localStorage.getItem("ticketId"),
+                userId: user.id,
+                commentText: comment.commentText,
+                commentTime: comment.commentTime,
+                userName: user.name
+            },
+            success: function(form, action) {},
+            failure: function (form, action) {
+                alert("Cannot save comment")
+            }
+        });
+    }
+
+    var commentButton = Ext.create('Ext.button.Button', {
+        text: 'Send',
+        handler: sendComment
+    });
+
+    var commentspanel = Ext.create('Ext.panel.Panel',{
+        width: 580,
+        layout: {
+            type: 'vbox',
+            align: 'stretch',
+            padding: 10
+        },
+        items: [
+            {
+                xtype: 'component',
+                html: '<h2>Comments</h2>'
+            },
+            commentslist,
+            commentTextInput
+        ],
+        buttons: [
+            commentButton
+        ]
+    });
+
+    var ticketdetailswindow = Ext.create('Ext.Window', {
+        width: 1030,
+        height: 500,
+        padding: 15,
+        modal: true,
+        title: "Ticket details",
+        layout: {
+            type: 'hbox',
+            align: 'stretch'
+        },
+        items: [
+            ticketdetailspanel,
+            {
+                xtype: 'splitter',
+            },
+            commentspanel
         ]
     }).show();
 };
@@ -480,6 +634,10 @@ let newticket = function () {
         fields: ['id', 'name']
     });
 
+    var ownerStore = Ext.create('Ext.data.Store', {
+        fields: ['id', 'name']
+    });
+
     var reporters = Ext.create('Ext.form.ComboBox', {
         fieldLabel: 'Reporter',
         store: reporterStore,
@@ -488,9 +646,7 @@ let newticket = function () {
         valueField: 'id'
     });
 
-    var ownerStore = Ext.create('Ext.data.Store', {
-        fields: ['id', 'name']
-    });
+
 
     var owners = Ext.create('Ext.form.ComboBox', {
         fieldLabel: 'Owner',
@@ -508,13 +664,12 @@ let newticket = function () {
             for (var i = 0; i < allUser.length; i++) {
                 reporterStore.add({id: allUser[i].id, name: allUser[i].name});
             }
-            reporters.setValue(allUser[0]);
+            reporters.setValue(allUser[0].id);
         },
         failure: function (form, action) {
             alert(form.responseText);
         }
     });
-
 
     Ext.Ajax.request({
         url: '/api/user/getAllOwner',
@@ -524,16 +679,20 @@ let newticket = function () {
             for (var i = 0; i < allUser.length; i++) {
                 ownerStore.add({id: allUser[i].id, name: allUser[i].name});
             }
-            owners.setValue(allUser[0]);
+            owners.setValue(allUser[0].id);
         },
         failure: function (form, action) {
             alert(form.responseText);
         }
     });
 
+
+
+
+
     var newticketwindow = Ext.create('Ext.Window', {
-        width: 1000,
-        height: 500,
+        width: 500,
+        height: 370,
         modal: true,
         title: "New ticket",
         layout: {

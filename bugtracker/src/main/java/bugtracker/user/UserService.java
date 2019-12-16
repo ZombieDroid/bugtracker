@@ -34,13 +34,15 @@ public class UserService implements UserDetailsService {
     }
 
     public UserEntity deleteUser(UserEntity user){
-        user.setDeletedTs(LocalDateTime.now());
-        return userRepository.save(user);
+        UserEntity userEntity = userRepository.findUserEntityById(user.getId());
+        userEntity.setDeletedTs(LocalDateTime.now());
+        return userRepository.save(userEntity);
     }
 
     public UserEntity undeleteUser(UserEntity user){
-        user.setDeletedTs(null);
-        return userRepository.save(user);
+        UserEntity userEntity = userRepository.findUserEntityById(user.getId());
+        userEntity.setDeletedTs(null);
+        return userRepository.save(userEntity);
     }
 
     public UserEntity modifyUser(UserEntity user){
