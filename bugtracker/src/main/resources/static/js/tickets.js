@@ -543,6 +543,10 @@ let newticket = function () {
         fields: ['id', 'name']
     });
 
+    var ownerStore = Ext.create('Ext.data.Store', {
+        fields: ['id', 'name']
+    });
+
     var reporters = Ext.create('Ext.form.ComboBox', {
         fieldLabel: 'Reporter',
         store: reporterStore,
@@ -551,9 +555,7 @@ let newticket = function () {
         valueField: 'id'
     });
 
-    var ownerStore = Ext.create('Ext.data.Store', {
-        fields: ['id', 'name']
-    });
+
 
     var owners = Ext.create('Ext.form.ComboBox', {
         fieldLabel: 'Owner',
@@ -571,13 +573,12 @@ let newticket = function () {
             for (var i = 0; i < allUser.length; i++) {
                 reporterStore.add({id: allUser[i].id, name: allUser[i].name});
             }
-            reporters.setValue(allUser[0]);
+            reporters.setValue(allUser[0].id);
         },
         failure: function (form, action) {
             alert(form.responseText);
         }
     });
-
 
     Ext.Ajax.request({
         url: '/api/user/getAllOwner',
@@ -587,12 +588,16 @@ let newticket = function () {
             for (var i = 0; i < allUser.length; i++) {
                 ownerStore.add({id: allUser[i].id, name: allUser[i].name});
             }
-            owners.setValue(allUser[0]);
+            owners.setValue(allUser[0].id);
         },
         failure: function (form, action) {
             alert(form.responseText);
         }
     });
+
+
+
+
 
     var newticketwindow = Ext.create('Ext.Window', {
         width: 1000,
