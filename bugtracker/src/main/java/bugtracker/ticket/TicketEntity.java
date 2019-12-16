@@ -25,7 +25,6 @@ public class TicketEntity {
     private Long ownerId;
     private Long statusId;
     private Long projectId;
-    private LocalDateTime spentTime;
     private Long type;
     private LocalDate creationTime;
 
