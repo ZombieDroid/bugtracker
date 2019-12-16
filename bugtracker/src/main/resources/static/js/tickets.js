@@ -600,8 +600,8 @@ let newticket = function () {
 
 
     var newticketwindow = Ext.create('Ext.Window', {
-        width: 1000,
-        height: 500,
+        width: 500,
+        height: 370,
         modal: true,
         title: "New ticket",
         layout: {
