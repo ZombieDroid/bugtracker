@@ -140,6 +140,7 @@ let projectdetails = function() {
         height: 380,
         padding: 15,
         modal: true,
+        title: "Project details",
         layout: {
             type: 'vbox',
             padding: 5
