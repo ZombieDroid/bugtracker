@@ -226,7 +226,7 @@ let ticketdetails = function() {
                 console.log(d)
                 commentStore.add({
                     commentText: comments[i].commentText,
-                    commentTime: new Date(d[0], d[1], d[2], d[3], d[4], d[5]),
+                    commentTime: new Date(Date(d[0], d[1], d[2], d[3], d[4], d[5])),
                     commentUser: comments[i].userName
                 });
             }
@@ -238,7 +238,9 @@ let ticketdetails = function() {
 
     var commentTextInput = Ext.create('Ext.form.TextArea', {
         margin: 10,
-        docked: 'bottom'
+        docked: 'bottom',
+        maxLength: 250,
+        enforceMaxLength: true
     });
 
     var commentslist = Ext.create('Ext.DataView', {
@@ -278,26 +280,27 @@ let ticketdetails = function() {
     var commentButton = Ext.create('Ext.button.Button', {
         text: 'Send',
         handler: function() {
-            Ext.Ajax.request({
-                url: '/api/user/current/',
-                method: 'GET',
-                success: function (form, action) {
-                    let currentuser = JSON.parse(form.responseText);
-                    let newcomment = {
-                        commentText: commentTextInput.getValue(),
-                        commentTime: new Date(),
-                        commentUser: currentuser.name
-                    };
-                    createComment(currentuser, newcomment);
-                    commentStore.add(newcomment);
-                    commentslist.getScrollable().scrollTo(Infinity, Infinity, true);
-                    commentTextInput.setValue('');
-                },
-                failure: function (form, action) {
-                    alert("Cannot fetch current user")
-                }
-            });
-
+            if (commentTextInput.getValue()) {
+                Ext.Ajax.request({
+                    url: '/api/user/current/',
+                    method: 'GET',
+                    success: function (form, action) {
+                        let currentuser = JSON.parse(form.responseText);
+                        let newcomment = {
+                            commentText: commentTextInput.getValue(),
+                            commentTime: new Date(),
+                            commentUser: currentuser.name
+                        };
+                        createComment(currentuser, newcomment);
+                        commentStore.add(newcomment);
+                        commentslist.getScrollable().scrollTo(Infinity, Infinity, true);
+                        commentTextInput.setValue('');
+                    },
+                    failure: function (form, action) {
+                        alert("Cannot fetch current user")
+                    }
+                });
+            }
         }
     });
 
