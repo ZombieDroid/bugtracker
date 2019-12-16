@@ -65,7 +65,7 @@ public class BTUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return user.getDeletedTs() == null;
     }
 
     public Long getId() {
