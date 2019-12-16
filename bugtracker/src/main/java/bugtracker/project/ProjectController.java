@@ -35,7 +35,7 @@ public class ProjectController {
     }
 
     @PostMapping("/update")
-    public ResponseEntity<String> updateTicket(@RequestBody ProjectEntity project) {
+    public ResponseEntity<String> updateProject(@RequestBody ProjectEntity project) {
         try{
             projectService.saveProjectWithHistory(project, UPDATE);
         } catch (Exception e){

@@ -110,7 +110,7 @@ public class TicketController {
         }
 
         try{
-            ticketService.saveTicket(ticket);
+            ticketService.saveTicket(ticket, "update");
         } catch (Exception e){
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }

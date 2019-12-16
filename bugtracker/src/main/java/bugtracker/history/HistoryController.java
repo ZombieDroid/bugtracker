@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.inject.Inject;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/history")
@@ -40,6 +41,17 @@ public class HistoryController {
             mv.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return mv;
+    }
+
+
+    @GetMapping("/all/objectid/{objectId}")
+    public ResponseEntity<List<HistoryEntity>> getAllTicketHistory(@PathVariable String objectId){
+        return new ResponseEntity<>(historyService.getAllByObjectId(Long.valueOf(objectId)), HttpStatus.OK);
+    }
+
+    @GetMapping("/all/projectid/{projectid}")
+    public ResponseEntity<List<HistoryEntity>> getAllProjectId(@PathVariable String projectid){
+        return new ResponseEntity<>(historyService.getAllByProjectId(Long.valueOf(projectid)), HttpStatus.OK);
     }
 
     @GetMapping("/all")
