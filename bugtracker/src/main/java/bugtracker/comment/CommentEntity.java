@@ -17,6 +17,7 @@ public class CommentEntity {
     private long userId;
 
     private String commentText;
+    private String userName;
     private LocalDateTime commentTime;
 
     public long getId() {
@@ -41,6 +42,14 @@ public class CommentEntity {
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public void setTicketId(long ticketId) {
