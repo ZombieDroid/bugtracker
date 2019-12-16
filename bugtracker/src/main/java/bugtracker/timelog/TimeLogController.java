@@ -11,6 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.inject.Inject;
+import java.sql.Date;
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/timelog")
@@ -35,6 +37,7 @@ public class TimeLogController {
 
         if(user != null){
             timeLog.setUserId(user.getId());
+            timeLog.setDate(LocalDate.now());
             timeLogService.createTimeLog(timeLog);
 
             return new ResponseEntity(HttpStatus.OK);

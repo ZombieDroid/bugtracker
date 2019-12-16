@@ -166,7 +166,7 @@ let ticketdetails = function() {
                 method: 'POST',
                 jsonData: getTicket(),
                 success: function (form, action) {
-                    ticketdetailspanel.close();
+                    ticketdetailswindow.close();
                     updateTicketTable('');
                 },
                 failure: function (form, action) {
@@ -246,9 +246,9 @@ let ticketdetails = function() {
             ticketType
         ],
         buttons: [
-            updateButton,
             logTimeButton,
-            showHistoryButton
+            showHistoryButton,
+            updateButton
         ]
     });
 
@@ -671,6 +671,7 @@ let newticket = function () {
             alert(form.responseText);
         }
     });
+
 
     Ext.Ajax.request({
         url: '/api/user/getAllOwner',

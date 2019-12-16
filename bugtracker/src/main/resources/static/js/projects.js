@@ -128,6 +128,21 @@ let projectdetails = function() {
         }
     });
 
+    var projectTimeLogStatsButton = Ext.create('Ext.button.Button', {
+        text: 'Time Log Statistics',
+        handler: projecttimelogstats
+    });
+
+    var projectUserLogTimeStatsButton = Ext.create('Ext.button.Button', {
+        text: 'User Time Log Statistics',
+        handler: projectuserlogtimestats
+    });
+
+    var projectPriorityStatsButton = Ext.create('Ext.button.Button', {
+        text: 'Priority Statistics',
+        handler: projectprioritystats
+    });
+
     var getProject = function () {
         return {
             id: project.id,
@@ -161,7 +176,11 @@ let projectdetails = function() {
             s3date
         ],
         buttons: [
-            showHistoryButton, updateButton
+            showHistoryButton,
+            projectTimeLogStatsButton,
+            projectUserLogTimeStatsButton,
+            projectPriorityStatsButton,
+            updateButton
         ]
     }).show();
 };
@@ -208,6 +227,206 @@ var showHistoryForProject = function () {
         modal: true,
         items: [
             historyPanel
+        ]
+    }).show();
+};
+
+let projecttimelogstats = function(){
+    let statsStore = Ext.create('Ext.data.Store', {
+        fields : ['month', 'time']
+    });
+
+    Ext.Ajax.request({
+        url: "/api/project/timelogstats/" + localStorage.getItem("projectId"),
+        method: "GET",
+        async: false,
+        success: function (form, action) {
+            const stats = JSON.parse(form.responseText);
+            for(let i=0; i<stats.length; i++){
+                statsStore.add({month: stats[i].month, time: stats[i].time});
+            }
+        },
+        failure: function (form, action) {
+            alert(form.responseText);
+        }
+    });
+
+    Ext.define('App.view.TimeLogStatsTable', {
+        extend: 'Ext.grid.Panel',
+        title: 'Statistics',
+        store: statsStore,
+        margin: '15 0 20 0',
+        resizable: true,
+        width: 800,
+        columns: [  {
+            text: 'Month',
+            flex: 5 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'month'
+        },{
+            text: 'Spent Time',
+            flex: 10 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'time'
+        }]
+    });
+
+    let statsTable = Ext.create('App.view.TimeLogStatsTable', {
+    });
+
+    var statsWindow = Ext.create('Ext.Window', {
+        width: 1000,
+        height: 500,
+        modal: true,
+        title: "Project Log Time Statistics",
+        layout: {
+            type: 'vbox',
+            padding: 5
+        },
+        items: [
+            statsTable
+        ]
+    }).show();
+};
+
+let projectuserlogtimestats = function(){
+    let statsStore = Ext.create('Ext.data.Store', {
+        fields : ['month', 'user', 'time']
+    });
+
+    Ext.Ajax.request({
+        url: "/api/project/usertimelogstats/" + localStorage.getItem("projectId"),
+        method: "GET",
+        async: false,
+        success: function (form, action) {
+            const stats = JSON.parse(form.responseText);
+            for(let i=0; i<stats.length; i++){
+                statsStore.add({month: stats[i].month, user: stats[i].user, time: stats[i].time});
+            }
+        },
+        failure: function (form, action) {
+            alert(form.responseText);
+        }
+    });
+
+    Ext.define('App.view.UserTimeLogStatsTable', {
+        extend: 'Ext.grid.Panel',
+        title: 'Statistics',
+        store: statsStore,
+        margin: '15 0 20 0',
+        resizable: true,
+        width: 800,
+        columns: [  {
+            text: 'Month',
+            flex: 5 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'month'
+        },{
+            text: 'User',
+            flex: 10 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'user'
+        },{
+            text: 'Spent Time',
+            flex: 10 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'time'
+        }]
+    });
+
+    let statsTable = Ext.create('App.view.UserTimeLogStatsTable', {
+    });
+
+    var statsWindow = Ext.create('Ext.Window', {
+        width: 1000,
+        height: 500,
+        modal: true,
+        title: "User Log Time Statistics",
+        layout: {
+            type: 'vbox',
+            padding: 5
+        },
+        items: [
+            statsTable
+        ]
+    }).show();
+};
+
+let projectprioritystats = function(){
+
+    let statsStore = Ext.create('Ext.data.Store', {
+        fields : ['month', 's1Percent', 's2Percent', 's3Percent']
+    });
+
+    Ext.Ajax.request({
+        url: "/api/project/prioritystats/" + localStorage.getItem("projectId"),
+        method: "GET",
+        async: false,
+        success: function (form, action) {
+            const stats = JSON.parse(form.responseText);
+            for(let i=0; i<stats.length; i++){
+                statsStore.add({month: stats[i].month, s1Percent: stats[i].s1Percent + '%',
+                    s2Percent: stats[i].s2Percent + '%', s3Percent: stats[i].s3Percent + '%'});
+            }
+        },
+        failure: function (form, action) {
+            alert(form.responseText);
+        }
+    });
+
+    Ext.define('App.view.PriorityStatsTable', {
+        extend: 'Ext.grid.Panel',
+        title: 'Statistics',
+        store: statsStore,
+        margin: '15 0 20 0',
+        resizable: true,
+        width: 800,
+        columns: [  {
+            text: 'Month',
+            flex: 5 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'month'
+        },{
+            text: 'S1',
+            flex: 10 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 's1Percent'
+        },{
+            text: 'S2',
+            flex: 10 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 's2Percent'
+        },{
+            text: 'S3',
+            flex: 10 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 's3Percent'
+        }]
+    });
+
+    let statsTable = Ext.create('App.view.PriorityStatsTable', {
+    });
+
+    var statsWindow = Ext.create('Ext.Window', {
+        width: 1000,
+        height: 500,
+        padding: 15,
+        modal: true,
+        layout: {
+            type: 'vbox',
+            padding: 5
+        },
+        items: [
+            statsTable
         ]
     }).show();
 };

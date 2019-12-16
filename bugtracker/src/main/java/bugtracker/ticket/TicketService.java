@@ -59,4 +59,5 @@ public class TicketService {
     public List<TicketEntity> searchByName(String text) { return ticketRepository.findByNameContaining(text); }
     public List<TicketEntity> searchByDescription(String text) { return ticketRepository.findByDescriptionContaining(text); }
 
+    public List<TicketEntity> searchByProject(Long projectId) { return ticketRepository.findByProjectId(projectId); }
 }

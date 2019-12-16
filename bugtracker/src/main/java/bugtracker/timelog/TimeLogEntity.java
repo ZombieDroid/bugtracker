@@ -4,6 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "TIMELOG")
@@ -15,6 +16,7 @@ public class TimeLogEntity {
     private Long userId;
     private Long ticketId;
     private String description;
+    private LocalDate logdate;
 
     public long getId() {
         return id;
@@ -54,5 +56,13 @@ public class TimeLogEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public LocalDate getDate() {
+        return logdate;
+    }
+
+    public void setDate(LocalDate date) {
+        this.logdate = date;
     }
 }

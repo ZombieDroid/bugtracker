@@ -5,6 +5,8 @@ import bugtracker.project.ProjectService;
 import bugtracker.status.StatusEntity;
 import bugtracker.status.StatusService;
 import bugtracker.status.StatusWorkflow;
+import bugtracker.timelog.TimeLogEntity;
+import bugtracker.timelog.TimeLogService;
 import bugtracker.user.UserEntity;
 import bugtracker.user.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,6 +26,7 @@ import javax.inject.Inject;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/ticket")
@@ -40,6 +43,9 @@ public class TicketController {
 
     @Inject
     StatusService statusService;
+
+    @Inject
+    TimeLogService timeLogService;
 
     @AllArgsConstructor
     @Getter
@@ -108,7 +114,7 @@ public class TicketController {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
         }
-
+        ticket.setCreationTime(currTicket.getCreationTime());
         try{
             ticketService.saveTicket(ticket, "update");
         } catch (Exception e){
@@ -165,6 +171,12 @@ public class TicketController {
                 throw new Exception("Unknown type: " + id);
         }
         return new ResponseEntity<>(type, HttpStatus.OK);
+    }
+
+    @GetMapping("/getSpentTime/{id}")
+    public ResponseEntity<Long> getSpentTimeById(@PathVariable long id) {
+        Long spentTime = timeLogService.getTimeLogsByTicketId(id).stream().mapToLong(TimeLogEntity::getTime).sum();
+        return new ResponseEntity<>(spentTime, HttpStatus.OK);
     }
 
     @GetMapping("/searchTickets/")

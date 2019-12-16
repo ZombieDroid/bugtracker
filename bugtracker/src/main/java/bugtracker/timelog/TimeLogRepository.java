@@ -8,4 +8,6 @@ public interface TimeLogRepository extends JpaRepository<TimeLogEntity, Long> {
     List<TimeLogEntity> findAll();
 
     TimeLogEntity findTimeLogEntityById(Long id);
+
+    List<TimeLogEntity> findAllByTicketId(Long projectId);
 }

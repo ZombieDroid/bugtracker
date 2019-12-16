@@ -22,4 +22,9 @@ public class TimeLogService {
     public TimeLogEntity getTimeLogById(Long id){
         return timeLogRepository.findTimeLogEntityById(id);
     }
+
+    public List<TimeLogEntity> getTimeLogsByTicketId(Long ticketId) {
+
+        return timeLogRepository.findAllByTicketId(ticketId);
+    }
 }

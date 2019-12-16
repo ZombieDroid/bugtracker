@@ -12,4 +12,6 @@ public interface TicketRepository extends JpaRepository<TicketEntity, Long> {
 
     List<TicketEntity> findByNameContaining(String text);
     List<TicketEntity> findByDescriptionContaining(String text);
+
+    List<TicketEntity> findByProjectId(Long projectId);
 }
