@@ -101,8 +101,18 @@ public class UserController {
         return new ResponseEntity<>(userService.getUsersByType(2), HttpStatus.OK);
     }
 
+    @GetMapping("/current/")
+    public ResponseEntity<UserEntity> getCurrentUser(Authentication authentication) {
+        if (authentication != null) {
+            BTUserDetails principal = (BTUserDetails) authentication.getPrincipal();
+            return new ResponseEntity<>(userService.getUserById(principal.getId()), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
+        }
+    }
+
     @GetMapping("/current/roles")
-    public ResponseEntity<List<String>> getCurrentUser(Authentication authentication){
+    public ResponseEntity<List<String>> getCurrentUserRoles(Authentication authentication){
         if (authentication != null) {
             BTUserDetails principal = (BTUserDetails) authentication.getPrincipal();
             return new ResponseEntity<>(principal.getAuthorities().stream().map(t -> ((GrantedAuthority) t).getAuthority()).collect(toList()), HttpStatus.OK);
