@@ -1,6 +1,23 @@
 /* Based on ext-6.2.0-gpl/ext-6.2.0/build/examples/classic/responsive-app/resources/ResponsiveApp-all.css
  * © 2019 Sencha Inc. (under the terms of the GPLv3 license) */
 
+.x-dataview-item {
+    border        : 1px solid #dadada;
+    border-radius : 2px;
+    padding       : 2px;
+    margin        : 2px;
+}
+
+.comments .created{
+    font-style:italic
+}
+.comments .user{
+    font-weight:bold
+}
+.comments .content{
+    margin-bottom:10px
+}
+
 .deleted-user .x-grid-cell {
     background-color: #ffe2e2;
     color: #900;
@@ -729,7 +746,8 @@ td.x-frame-br {
 }
 
 .x-splitter {
-    font-size: 1px
+    font-size: 1px;
+    background-color: #3892D4
 }
 
 .x-splitter-horizontal {
