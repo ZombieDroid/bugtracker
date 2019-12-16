@@ -205,6 +205,12 @@ let ticketdetails = function() {
         handler: logTime
     });
 
+    var showHistoryButton = Ext.create('Ext.button.Button', {
+        text: 'Show history',
+        handler: showHistory
+
+    });
+
     var ticketdetailswindow = Ext.create('Ext.Window', {
         width: 1000,
         height: 500,
@@ -226,10 +232,95 @@ let ticketdetails = function() {
         ],
         buttons: [
             updateButton,
-            logTimeButton
+            logTimeButton,
+            showHistoryButton
         ]
     }).show();
 };
+
+var showHistory = function () {
+    updateTicketHistoryTable();
+
+    var historiesPanel = Ext.define('App.view.HistoryPanel', {
+        extend: 'Ext.grid.Panel',
+        title: 'History',
+        store: historyStore,
+        margin: '15 0 20 0',
+        resizable: true,
+
+        columns: [  {
+            text: 'Date',
+            flex: 5 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'createdAt'
+        },{
+            text: 'Event description',
+            flex: 10 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'eventDescription'
+        },{
+            text: 'Free text',
+            flex: 5 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'freeText'
+        }]
+    });
+
+    var historyPanel = Ext.create('App.view.HistoryPanel', {
+        renderTo: Ext.getBody()
+    });
+
+
+    var historesWindow = Ext.create('Ext.Window', {
+        width: 1000,
+        height: 500,
+        padding: 15,
+        title:'History',
+        modal: true,
+        items: [
+            historyPanel
+        ]
+    }).show();
+};
+
+var updateTicketHistoryTable = function(){
+    var ticketId = localStorage.getItem('ticketId');
+    console.log('update ticket: ' + ticketId);
+
+    Ext.Ajax.request({
+        url: "/api/history/all/objectid/" + ticketId,
+        method: "GET",
+        success: function (form, action){
+            histories = JSON.parse(form.responseText);
+            fillHistoryStore();
+            //updateTicketHistoryTable();
+        },
+        failure: function(form, action){
+            alert(form.responseText);
+        }
+    });
+};
+
+var fillHistoryStore = function (){
+    for(var i=0; i<histories.length; i++){
+        historyStore.add({createdAt: histories[i].createdAt, eventDescription: histories[i].eventDescription,
+            freeText: histories[i].freeText});
+    }
+};
+
+var historyStore = Ext.create('Ext.data.Store', {
+    fields : ['createdAt', 'eventDescription', 'freeText'],
+    proxy : {
+        type : 'memory',
+        reader : {
+            type : 'json',
+            rootProperty : 'items'
+        }
+    }
+});
 
 let logTime = function () {
 
