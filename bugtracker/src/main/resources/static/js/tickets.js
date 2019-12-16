@@ -185,7 +185,8 @@ let ticketdetails = function() {
             priority: ticketPrio.getValue(),
             type: ticketType.getValue(),
             reporterId: reporters.getValue(),
-            ownerId: owners.getValue()
+            ownerId: owners.getValue(),
+            statusId: statuses.getValue()
         }
     };
 
