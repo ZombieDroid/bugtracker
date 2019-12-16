@@ -104,6 +104,12 @@ let projectdetails = function() {
         }
     });
 
+    var showHistoryButton = Ext.create('Ext.button.Button', {
+        text: 'Show history',
+        handler: showHistoryForProject
+
+    });
+
     var updateButton = Ext.create('Ext.button.Button', {
         text: 'Update',
         handler: function () {
@@ -155,10 +161,91 @@ let projectdetails = function() {
             s3date
         ],
         buttons: [
-            updateButton
+            showHistoryButton, updateButton
         ]
     }).show();
 };
+
+var showHistoryForProject = function () {
+    updateProjectHistoryTable();
+    var historiesPanel = Ext.define('App.view.HistoryPanel', {
+        extend: 'Ext.grid.Panel',
+        title: 'History',
+        store: historyStore,
+        margin: '15 0 20 0',
+        resizable: true,
+
+        columns: [  {
+            text: 'Date',
+            flex: 5 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'createdAt'
+        },{
+            text: 'Event description',
+            flex: 10 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'eventDescription'
+        },{
+            text: 'Free text',
+            flex: 5 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'freeText'
+        }]
+    });
+
+    var historyPanel = Ext.create('App.view.HistoryPanel', {
+        renderTo: Ext.getBody()
+    });
+
+    var historesWindow = Ext.create('Ext.Window', {
+        width: 1000,
+        height: 500,
+        padding: 15,
+        title:'History',
+        modal: true,
+        items: [
+            historyPanel
+        ]
+    }).show();
+};
+
+var updateProjectHistoryTable = function(){
+    var projectId = localStorage.getItem('projectId');
+    console.log('update project: ' + projectId);
+    Ext.Ajax.request({
+        url: "/api/history/all/projectid/" + projectId,
+        method: "GET",
+        success: function (form, action){
+            histories = JSON.parse(form.responseText);
+            fillHistoryStore();
+        },
+        failure: function(form, action){
+            alert(form.responseText);
+        }
+    });
+};
+
+var fillHistoryStore = function (){
+    for(var i=0; i<histories.length; i++){
+        historyStore.add({createdAt: histories[i].createdAt, eventDescription: histories[i].eventDescription,
+            freeText: histories[i].freeText});
+    }
+};
+
+
+var historyStore = Ext.create('Ext.data.Store', {
+    fields : ['createdAt', 'eventDescription', 'freeText'],
+    proxy : {
+        type : 'memory',
+        reader : {
+            type : 'json',
+            rootProperty : 'items'
+        }
+    }
+});
 
 let newproject = function () {
 

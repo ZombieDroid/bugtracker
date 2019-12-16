@@ -11,11 +11,14 @@ public class HistoryService {
     @Inject
     HistoryRepository historyRepository;
 
-    public HistoryEntity createHistory(HistoryEntity project){
-        return historyRepository.save(project);
+    public HistoryEntity createHistory(HistoryEntity historyEntity){
+        return historyRepository.save(historyEntity);
     }
     public List<HistoryEntity> getAllByObjectId(Long objectId){
         return historyRepository.findAllByObjectId(objectId);
+    }
+    public List<HistoryEntity> getAllByProjectId(Long projectId){
+        return historyRepository.findAllByProjectId(projectId);
     }
     public HistoryEntity getHistoryById(Long id){
         return historyRepository.findById(id).orElse(null);
