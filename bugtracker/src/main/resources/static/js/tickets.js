@@ -166,7 +166,7 @@ let ticketdetails = function() {
                 method: 'POST',
                 jsonData: getTicket(),
                 success: function (form, action) {
-                    ticketdetailswindow.close();
+                    ticketdetailspanel.close();
                     updateTicketTable('');
                 },
                 failure: function (form, action) {
@@ -250,55 +250,8 @@ let ticketdetails = function() {
             logTimeButton,
             showHistoryButton
         ]
-    }).show();
-};
-
-var showHistory = function () {
-    updateTicketHistoryTable();
-
-    var historiesPanel = Ext.define('App.view.HistoryPanel', {
-        extend: 'Ext.grid.Panel',
-        title: 'History',
-        store: historyStore,
-        margin: '15 0 20 0',
-        resizable: true,
-
-        columns: [  {
-            text: 'Date',
-            flex: 5 / 100,
-            sortable: false,
-            hideable: false,
-            dataIndex: 'createdAt'
-        },{
-            text: 'Event description',
-            flex: 10 / 100,
-            sortable: false,
-            hideable: false,
-            dataIndex: 'eventDescription'
-        },{
-            text: 'Free text',
-            flex: 5 / 100,
-            sortable: false,
-            hideable: false,
-            dataIndex: 'freeText'
-        }]
     });
 
-    var historyPanel = Ext.create('App.view.HistoryPanel', {
-        renderTo: Ext.getBody()
-    });
-
-
-    var historesWindow = Ext.create('Ext.Window', {
-        width: 1000,
-        height: 500,
-        padding: 15,
-        title:'History',
-        modal: true,
-        items: [
-            historyPanel
-        ]
-    });
 
     Ext.Ajax.request({
         url: '/api/comment/all/'+localStorage.getItem("ticketId"),
@@ -393,7 +346,7 @@ var showHistory = function () {
                 alert("Cannot save comment")
             }
         });
-    }
+    };
 
     var commentButton = Ext.create('Ext.button.Button', {
         text: 'Send',
@@ -436,6 +389,54 @@ var showHistory = function () {
                 xtype: 'splitter',
             },
             commentspanel
+        ]
+    }).show();
+};
+
+var showHistory = function () {
+    updateTicketHistoryTable();
+
+    var historiesPanel = Ext.define('App.view.HistoryPanel', {
+        extend: 'Ext.grid.Panel',
+        title: 'History',
+        store: historyStore,
+        margin: '15 0 20 0',
+        resizable: true,
+
+        columns: [  {
+            text: 'Date',
+            flex: 5 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'createdAt'
+        },{
+            text: 'Event description',
+            flex: 10 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'eventDescription'
+        },{
+            text: 'Free text',
+            flex: 5 / 100,
+            sortable: false,
+            hideable: false,
+            dataIndex: 'freeText'
+        }]
+    });
+
+    var historyPanel = Ext.create('App.view.HistoryPanel', {
+        renderTo: Ext.getBody()
+    });
+
+
+    var historesWindow = Ext.create('Ext.Window', {
+        width: 1000,
+        height: 500,
+        padding: 15,
+        title:'History',
+        modal: true,
+        items: [
+            historyPanel
         ]
     }).show();
 };
