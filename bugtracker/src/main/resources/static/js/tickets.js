@@ -450,7 +450,7 @@ var updateTicketHistoryTable = function(){
         method: "GET",
         success: function (form, action){
             histories = JSON.parse(form.responseText);
-            fillHistoryStore();
+            fillHistoryStore(histories);
             //updateTicketHistoryTable();
         },
         failure: function(form, action){
@@ -459,9 +459,11 @@ var updateTicketHistoryTable = function(){
     });
 };
 
-var fillHistoryStore = function (){
+var fillHistoryStore = function (histories){
+    var emptyArray = [];
+    historyStore = emptyArray;
     for(var i=0; i<histories.length; i++){
-        historyStore.add({createdAt: histories[i].createdAt, eventDescription: histories[i].eventDescription,
+        historyStore.push({createdAt: histories[i].createdAt, eventDescription: histories[i].eventDescription,
             freeText: histories[i].freeText});
     }
 };

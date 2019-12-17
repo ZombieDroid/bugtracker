@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import javax.inject.Inject;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -48,7 +49,12 @@ public class TicketService {
         historyEntity.setTargetStatusId(ticket.getStatusId());
         //history text
         StatusEntity statusEntity = statusService.getStatusById(ticket.getStatusId());
-        historyEntity.setFreeText("The modified ticket status: " + statusEntity.getName() + ", modified by:" + currentPrincipalName);
+        if ("create".equals(type)) {
+            historyEntity.setFreeText("The ticket is created by:" + currentPrincipalName);
+        }else{
+            historyEntity.setFreeText("The modified ticket status: " + statusEntity.getName() + ", modified by:" + currentPrincipalName);
+        }
+        historyEntity.setCreatedAt(LocalDateTime.now());
         //history
         historyEntity.setEventDescription( statusEntity.getName());
         historyService.createHistory(historyEntity);
