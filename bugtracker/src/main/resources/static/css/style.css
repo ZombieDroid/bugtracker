@@ -1,6 +1,19 @@
 /* Based on ext-6.2.0-gpl/ext-6.2.0/build/examples/classic/responsive-app/resources/ResponsiveApp-all.css
  * © 2019 Sencha Inc. (under the terms of the GPLv3 license) */
 
+/* this is the flex container that will take the rest of the height */
+.x-panel-bodyWrap {
+  display: flex !important;
+  flex: 1 !important;
+  min-height: 0px !important; /* IMPORTANT: you need this for non-chrome browsers */
+}
+
+/* the container for our overflowed content */
+.x-panel-body {
+  flex: 1 !important;
+  overflow: auto !important;
+}
+
 .x-dataview-item {
     border        : 1px solid #dadada;
     border-radius : 2px;
